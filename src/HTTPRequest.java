@@ -7,40 +7,47 @@ import java.io.*;
  * BODY [\n]
  */
 public class HTTPRequest {
-    // header info
-    private String verb, identifier, version;
+    private String verb, identifier, version; // header vars
     private HashMap<String, String> body = new HashMap<String, String>();
 
     public HTTPRequest(String request) throws IOException {
         Reader requestString = new StringReader(request);
         BufferedReader br = new BufferedReader(requestString);
         int linesRead = 0;
-        String line;
+
+        String line = br.readLine();
+        StringTokenizer st = new StringTokenizer(line);
+        // TODO: Error handling
+        verb = st.nextToken();
+        identifier = st.nextToken();
+        version = st.nextToken();
+
+        // DEBUG ONLY -- print header vars
+        System.out.printf("verb=%s\nid=%s\nver=%s\n",verb,identifier,version);
 
         // Read through each line in the request
-        while (null != (line = br.readLine())) {
-            String[] lineArr = line.split("\\s+");
-            // If this is the first line, then it is the header and we want to grab the header info
-            if (linesRead == 0) {
-                // TODO: Error handling
-                verb = lineArr[0];
-                identifier = lineArr[1];
-                version = lineArr[2];
-            }
+        while ((line = br.readLine()) != null) {
+            st = new StringTokenizer(line,":");
 
-            // TODO: Error handling & fix regex
-            lineArr[0].replaceAll("\\:",""); // This should remove all colons in the param name
-            body.put(lineArr[0],lineArr[1]);
+            // TODO: Error handling
+            body.put(st.nextToken(),st.nextToken());
 
             linesRead++;
-        } // end while
+        }
+
+        // DEBUG ONLY -- print out hashmap
+        Iterator it = body.entrySet().iterator();
+        while (it.hasNext()) {
+            HashMap.Entry pair = (HashMap.Entry) it.next();
+            System.out.printf("K = '%s', V= '%s'\n",pair.getKey(), pair.getValue());
+        }
 
 
-    } // end constructor
+    }
 
     // Getters
     public String getVerb() { return verb; }
     public String getIdentifier() { return identifier; }
     public String getVersion() { return version; }
 
-} // end class
+}
