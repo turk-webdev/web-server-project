@@ -1,4 +1,4 @@
-package configuration;
+package conf.configsetup;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
