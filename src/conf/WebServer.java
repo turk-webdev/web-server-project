@@ -4,8 +4,11 @@
  *********************************************************************/
 package conf;
 
+import conf.configsetup.MimeTypes;
+
 public class WebServer {
     public static void main(String[] args) {
-        // TODO: Populate here
+        // TEST ONLY
+        MimeTypes mt = new MimeTypes();
     }
 }
