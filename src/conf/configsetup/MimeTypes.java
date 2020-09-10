@@ -1,3 +1,8 @@
+/**********************************************************************
+ * File: MimeTypes.java
+ * Description: This class runs once at ANTIPARAZI start up to parse
+ * through the mime.types file and
+ *********************************************************************/
 package conf.configsetup;
 
 import java.io.BufferedReader;
@@ -10,10 +15,12 @@ import java.util.StringTokenizer;
 public class MimeTypes extends ConfigurationReader {
 
     private static HashMap<String, ArrayList<String>> mimeTypes;
+    private static HashMap<String, String> extensions;
 
     public MimeTypes(String file_name) {
         super(file_name);
         mimeTypes = new HashMap<>();
+        extensions = new HashMap<>();
     }
 
     // FOR DEBUGGING PURPOSES ONLY
@@ -37,6 +44,8 @@ public class MimeTypes extends ConfigurationReader {
             file_reader = new FileReader(config_file);
             buffer_reader = new BufferedReader(file_reader);
 
+            // Read through each line, skip if it is empty line or has #
+            // Tokenize & log away in our local data structures
             while ((line = buffer_reader.readLine()) != null) {
                 if (line.equals("")) continue;
                 st = new StringTokenizer(line);
@@ -48,11 +57,15 @@ public class MimeTypes extends ConfigurationReader {
                 while (st.hasMoreTokens()) {
                     currTok = st.nextToken();
                     extensions.add(currTok);
+                    this.extensions.put(currTok,type);
                 }
 
                 mimeTypes.put(type, (ArrayList) extensions.clone());
                 extensions.clear();
             }
+
+            buffer_reader.close();
+            file_reader.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -75,8 +88,11 @@ public class MimeTypes extends ConfigurationReader {
         return mimeTypes.get(type) != null;
     }
 
-    public String getTypeForExtension() {
-        // TODO: Implement reverse lookup
-        return "";
+    /**
+     * @param ext - file extension
+     * @return the String value, null if not found
+     */
+    public String getTypeForExtension(String ext) {
+        return extensions.get(ext);
     }
 }
