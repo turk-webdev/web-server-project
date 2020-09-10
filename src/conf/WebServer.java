@@ -8,7 +8,15 @@ import conf.configsetup.MimeTypes;
 
 public class WebServer {
     public static void main(String[] args) {
-        // TEST ONLY
-        MimeTypes mt = new MimeTypes();
+        testMimeTypes();
     }
+
+    public static void testMimeTypes() {
+        // TODO: Use relative pathing for this
+        MimeTypes mt = new MimeTypes("/Users/turkerdin/Desktop/School/CSC667/web-server-ufkun-adam/src/conf/mime.types");
+        mt.execute();
+        System.out.println("MIME TYPES HASHMAP\n========================");
+        mt.print();
+    }
+
 }
