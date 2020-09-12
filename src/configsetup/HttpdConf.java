@@ -22,19 +22,15 @@ public class HttpdConf extends ConfigurationReader {
 
     @Override
     public void execute() {
-
         //general storage variables for parsing, tokenizer for...tokenizing
         String current_line, key, value;
         StringTokenizer tokenizer;
-
         try {
             //set up the readers
             this.file_reader = new FileReader(this.config_file);
             this.buffer_reader = new BufferedReader(this.file_reader);
             //while the file still has lines
-            int i = 0;
             while ((current_line = this.buffer_reader.readLine()) != null) {
-                System.out.println("Loop number: " + i);
                 //set the tokenizer to the current line, get the next token
                 tokenizer = new StringTokenizer(current_line);
                 String current_token = tokenizer.nextToken();
@@ -48,11 +44,13 @@ public class HttpdConf extends ConfigurationReader {
                     key = tokenizer.nextToken();
                     value = tokenizer.nextToken().replaceAll("^\"|\"$", "");
                     this.script_alias_list.put(key, value);
+                    this.script_alias_list.put(value, key);
                 //second check is if its just an alias, they are also listed one by one
                 }else if (current_token.equals("Alias")){
                     key = tokenizer.nextToken();
                     value = tokenizer.nextToken().replaceAll("^\"|\"$", "");
                     this.alias_list.put(key, value);
+                    this.alias_list.put(value, key);
                 //third check is for Directory Index, special handling involved for multipled listed files
                 } else if (current_token.equals("DirectoryIndex")){
                     key = current_token;
@@ -63,15 +61,12 @@ public class HttpdConf extends ConfigurationReader {
                 //if its none of those, then it goes into the httpd list
                 } else {
                     key = current_token;
-                    System.out.println("Current token is " + current_token);
                     value = tokenizer.nextToken().replaceAll("^\"|\"$", "");
-                    System.out.println("Value is: " + value);
                     this.httpd_list.put(key, value);
                 }
-                    i++;
             }
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Exception: " + e);
         }
     }
 
