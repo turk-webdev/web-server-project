@@ -42,12 +42,12 @@ public class MimeTypes extends ConfigurationReader {
         StringTokenizer st;
 
         try {
-            file_reader = new FileReader(config_file);
-            buffer_reader = new BufferedReader(file_reader);
+            fileReader = new FileReader(configFile);
+            bufferedReader = new BufferedReader(fileReader);
 
             // Read through each line, skip if it is empty line or has #
             // Tokenize & log away in our local data structures
-            while ((line = buffer_reader.readLine()) != null) {
+            while ((line = bufferedReader.readLine()) != null) {
                 if (line.equals("")) continue;
                 st = new StringTokenizer(line);
                 String currTok = st.nextToken();
@@ -65,8 +65,8 @@ public class MimeTypes extends ConfigurationReader {
                 extensions.clear();
             }
 
-            buffer_reader.close();
-            file_reader.close();
+            bufferedReader.close();
+            fileReader.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
