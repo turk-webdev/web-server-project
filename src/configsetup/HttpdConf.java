@@ -1,4 +1,4 @@
-package configuration;
+package configsetup;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -32,7 +32,9 @@ public class HttpdConf extends ConfigurationReader {
             this.file_reader = new FileReader(this.config_file);
             this.buffer_reader = new BufferedReader(this.file_reader);
             //while the file still has lines
+            int i = 0;
             while ((current_line = this.buffer_reader.readLine()) != null) {
+                System.out.println("Loop number: " + i);
                 //set the tokenizer to the current line, get the next token
                 tokenizer = new StringTokenizer(current_line);
                 String current_token = tokenizer.nextToken();
@@ -52,7 +54,7 @@ public class HttpdConf extends ConfigurationReader {
                     value = tokenizer.nextToken().replaceAll("^\"|\"$", "");
                     this.alias_list.put(key, value);
                 //third check is for Directory Index, special handling involved for multipled listed files
-                } else if (currToken.equals("DirectoryIndex")){
+                } else if (current_token.equals("DirectoryIndex")){
                     key = current_token;
                     while(tokenizer.hasMoreTokens()){
                         value = tokenizer.nextToken().replaceAll("^\"|\"$", "");
@@ -61,20 +63,23 @@ public class HttpdConf extends ConfigurationReader {
                 //if its none of those, then it goes into the httpd list
                 } else {
                     key = current_token;
+                    System.out.println("Current token is " + current_token);
                     value = tokenizer.nextToken().replaceAll("^\"|\"$", "");
-                    this.httpdList.put(key, value);
+                    System.out.println("Value is: " + value);
+                    this.httpd_list.put(key, value);
                 }
+                    i++;
             }
-        } catch (IOException e) {
-            System.out.println("IOException");
+        } catch (Exception e) {
+            System.out.println(e);
         }
     }
 
     //standard getter methods
 
     public String get_httpd_conf(String key){
-        if (this.httpdList.containsKey(key)){
-            return this.httpdList.get(key);
+        if (this.httpd_list.containsKey(key)){
+            return this.httpd_list.get(key);
         }
         return null;
     }
