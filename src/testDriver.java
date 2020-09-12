@@ -1,4 +1,4 @@
-import configsetup.*;
+import conf.configsetup.*;
 
 public class testDriver{
     public static void main(String[] args){

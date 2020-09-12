@@ -21,6 +21,7 @@ public class MimeTypes extends ConfigurationReader {
         super(file_name);
         mimeTypes = new HashMap<>();
         extensions = new HashMap<>();
+        this.execute();
     }
 
     // FOR DEBUGGING PURPOSES ONLY
