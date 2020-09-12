@@ -1,7 +1,6 @@
-package configsetup;
+package conf.configsetup;
 
 import java.io.*;
-import java.util.Scanner;
 
 public abstract class ConfigurationReader {
 
