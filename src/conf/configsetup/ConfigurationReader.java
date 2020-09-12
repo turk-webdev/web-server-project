@@ -4,12 +4,12 @@ import java.io.*;
 
 public abstract class ConfigurationReader {
 
-    protected String config_file;
-    protected FileReader file_reader;
-    protected BufferedReader buffer_reader;
+    protected String configFile;
+    protected FileReader fileReader;
+    protected BufferedReader bufferedReader;
 
-    public ConfigurationReader(String file_name){
-        this.config_file = file_name;
+    public ConfigurationReader(String fileName){
+        this.configFile = fileName;
     }
 
     public abstract void execute();
