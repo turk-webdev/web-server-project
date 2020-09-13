@@ -16,7 +16,7 @@ public class HttpdConf extends ConfigurationReader {
         this.httpdList = new HashMap<>();
         this.scriptAliasList = new HashMap<>();
         this.aliasList = new HashMap<>();
-        this.execute();
+        execute();
     }
 
     @Override
