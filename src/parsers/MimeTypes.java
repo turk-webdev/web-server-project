@@ -3,11 +3,9 @@
  * Description: This class runs once at ANTIPARAZI start up to parse
  * through the mime.types file and
  *********************************************************************/
-package conf.configsetup;
+package parsers;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringTokenizer;
@@ -17,10 +15,11 @@ public class MimeTypes extends ConfigurationReader {
     private static HashMap<String, ArrayList<String>> mimeTypes;
     private static HashMap<String, String> extensions;
 
-    public MimeTypes(String file_name) {
+    public MimeTypes(InputStream file_name) {
         super(file_name);
         mimeTypes = new HashMap<>();
         extensions = new HashMap<>();
+        execute();
     }
 
     // FOR DEBUGGING PURPOSES ONLY
@@ -41,12 +40,11 @@ public class MimeTypes extends ConfigurationReader {
         StringTokenizer st;
 
         try {
-            file_reader = new FileReader(config_file);
-            buffer_reader = new BufferedReader(file_reader);
+            bufferedReader = new BufferedReader(new InputStreamReader(configFile,"UTF-8"));
 
             // Read through each line, skip if it is empty line or has #
             // Tokenize & log away in our local data structures
-            while ((line = buffer_reader.readLine()) != null) {
+            while ((line = bufferedReader.readLine()) != null) {
                 if (line.equals("")) continue;
                 st = new StringTokenizer(line);
                 String currTok = st.nextToken();
@@ -64,8 +62,7 @@ public class MimeTypes extends ConfigurationReader {
                 extensions.clear();
             }
 
-            buffer_reader.close();
-            file_reader.close();
+            bufferedReader.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
