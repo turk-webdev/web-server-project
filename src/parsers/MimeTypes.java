@@ -5,9 +5,7 @@
  *********************************************************************/
 package parsers;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.StringTokenizer;
@@ -17,7 +15,7 @@ public class MimeTypes extends ConfigurationReader {
     private static HashMap<String, ArrayList<String>> mimeTypes;
     private static HashMap<String, String> extensions;
 
-    public MimeTypes(String file_name) {
+    public MimeTypes(InputStream file_name) {
         super(file_name);
         mimeTypes = new HashMap<>();
         extensions = new HashMap<>();
@@ -42,8 +40,7 @@ public class MimeTypes extends ConfigurationReader {
         StringTokenizer st;
 
         try {
-            fileReader = new FileReader(configFile);
-            bufferedReader = new BufferedReader(fileReader);
+            bufferedReader = new BufferedReader(new InputStreamReader(configFile,"UTF-8"));
 
             // Read through each line, skip if it is empty line or has #
             // Tokenize & log away in our local data structures
@@ -66,7 +63,6 @@ public class MimeTypes extends ConfigurationReader {
             }
 
             bufferedReader.close();
-            fileReader.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

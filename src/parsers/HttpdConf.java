@@ -1,7 +1,8 @@
 package parsers;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
@@ -11,11 +12,11 @@ public class HttpdConf extends ConfigurationReader {
     private HashMap<String, String> scriptAliasList;
     private HashMap<String, String> aliasList;
 
-    public HttpdConf(String file_name) {
+    public HttpdConf(InputStream file_name) {
         super(file_name);
-        this.httpdList = new HashMap<>();
-        this.scriptAliasList = new HashMap<>();
-        this.aliasList = new HashMap<>();
+        httpdList = new HashMap<>();
+        scriptAliasList = new HashMap<>();
+        aliasList = new HashMap<>();
         execute();
     }
 
@@ -25,45 +26,50 @@ public class HttpdConf extends ConfigurationReader {
         String currLine, key, value;
         StringTokenizer tokenizer;
         try {
-            //set up the readers
-            this.fileReader = new FileReader(this.configFile);
-            this.bufferedReader = new BufferedReader(this.fileReader);
-            //while the file still has lines
-            while ((currLine = this.bufferedReader.readLine()) != null) {
-                //set the tokenizer to the current line, get the next token
-                tokenizer = new StringTokenizer(currLine);
-                String currToken = tokenizer.nextToken();
-                //hashtags are line delimiters
-                if(currToken.equals("#")){
+            bufferedReader = new BufferedReader(new InputStreamReader(configFile,"UTF-8"));
+
+            // read the file line by line
+            while ((currLine = bufferedReader.readLine()) != null) {
+                // Ignore blank lines
+                if (currLine.equals("")) {
                     continue;
                 }
-                //the actual parsing
-                //first check is if its a script alias, they are listed one by one
+
+                tokenizer = new StringTokenizer(currLine);
+                String currToken = tokenizer.nextToken();
+
+                // ignore comments
+                if(currToken.equals("#") || currToken.charAt(0) == '#'){
+                    continue;
+                }
+
+                // parsing to handle several exceptions within the httpd.conf file
                 if (currToken.equals("ScriptAlias")) {
                     key = tokenizer.nextToken();
                     value = tokenizer.nextToken().replaceAll("^\"|\"$", "");
-                    this.scriptAliasList.put(key, value);
-                    this.scriptAliasList.put(value, key);
+                    scriptAliasList.put(key, value);
+                    scriptAliasList.put(value, key);
                     //second check is if its just an alias, they are also listed one by one
                 }else if (currToken.equals("Alias")){
                     key = tokenizer.nextToken();
                     value = tokenizer.nextToken().replaceAll("^\"|\"$", "");
-                    this.aliasList.put(key, value);
-                    this.aliasList.put(value, key);
+                    aliasList.put(key, value);
+                    aliasList.put(value, key);
                     //third check is for Directory Index, special handling involved for multipled listed files
                 } else if (currToken.equals("DirectoryIndex")){
                     key = currToken;
                     while(tokenizer.hasMoreTokens()){
                         value = tokenizer.nextToken().replaceAll("^\"|\"$", "");
-                        this.httpdList.put(key, value);
+                        httpdList.put(key, value);
                     }
                     //if its none of those, then it goes into the httpd list
                 } else {
                     key = currToken;
                     value = tokenizer.nextToken().replaceAll("^\"|\"$", "");
-                    this.httpdList.put(key, value);
+                    httpdList.put(key, value);
                 }
             }
+            bufferedReader.close();
         } catch (Exception e) {
             System.out.println("Exception: " + e);
         }
@@ -72,22 +78,22 @@ public class HttpdConf extends ConfigurationReader {
     //standard getter methods
 
     public String getHttpdConf(String key){
-        if (this.httpdList.containsKey(key)){
-            return this.httpdList.get(key);
+        if (httpdList.containsKey(key)){
+            return httpdList.get(key);
         }
         return null;
     }
 
     public String get_alias(String key){
-        if(this.aliasList.containsKey(key)){
-            return this.aliasList.get(key);
+        if(aliasList.containsKey(key)){
+            return aliasList.get(key);
         }
         return null;
     }
 
     public String get_script_alias(String key){
-        if(this.scriptAliasList.containsKey(key)){
-            return this.scriptAliasList.get(key);
+        if(scriptAliasList.containsKey(key)){
+            return scriptAliasList.get(key);
         }
         return null;
     }

@@ -4,11 +4,11 @@ import java.io.*;
 
 public abstract class ConfigurationReader {
 
-    protected String configFile;
+    protected InputStream configFile;
     protected FileReader fileReader;
     protected BufferedReader bufferedReader;
 
-    public ConfigurationReader(String fileName){
+    public ConfigurationReader(InputStream fileName){
         this.configFile = fileName;
     }
 

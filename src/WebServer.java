@@ -7,6 +7,7 @@ import parsers.HttpdConf;
 import parsers.MimeTypes;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -24,10 +25,10 @@ public class WebServer {
     }
 
     public void start(){
-        this.loadConfigs();
-        this.port = Integer.parseInt(this.httpdConf.getHttpdConf("Listen"));
+        loadConfigs();
+        port = Integer.parseInt(httpdConf.getHttpdConf("Listen"));
 
-        this.test();
+//        test();
         try{
             server = new ServerSocket(port);
             while(true){
@@ -43,26 +44,19 @@ public class WebServer {
 
     public void loadConfigs() {
         // TODO: Use relative pathing for this
-        String mimeTypesURI="/src/conf/mime.types",httpdConfURI="/src/conf/httpd.conf";
-        try {
-            mimeTypesURI = Class.forName(this.getClass().getName()).getClassLoader().getResource("mime.types").toString();
-            httpdConfURI = Class.forName(this.getClass().getName()).getClassLoader().getResource("httpd.conf").toString();
-            System.out.printf("mime.types=%s, httpd.conf=%s\n",mimeTypesURI,httpdConfURI);
-        } catch (Exception e) {
-            System.out.println("Could not resolve config file paths");
-            e.printStackTrace();
-        }
+        InputStream mimeTypesIS = getClass().getClassLoader().getResourceAsStream("conf/mime.types");
+        InputStream httpdConfIS = getClass().getClassLoader().getResourceAsStream("conf/httpd.conf");
 
-        this.mimeTypes = new MimeTypes(mimeTypesURI);
-        this.httpdConf = new HttpdConf(httpdConfURI);
+        this.mimeTypes = new MimeTypes(mimeTypesIS);
+        this.httpdConf = new HttpdConf(httpdConfIS);
 
     }
 
     public void test(){
         System.out.println("MIME TYPES HASHMAP\n========================");
-        this.mimeTypes.print();
+        mimeTypes.print();
         String testAlias = "Listen";
-        System.out.println("\n" + testAlias + ": " + this.port);
+        System.out.println("\n" + testAlias + ": " + port);
 
     }
 
