@@ -31,6 +31,7 @@ public class WebServer {
         try{
             server = new ServerSocket(port);
             while(true){
+                //todo: this is where threading is going to go, threads/Workers.
                 client = server.accept();
                 System.out.println("Connection Established!\n");
             }
