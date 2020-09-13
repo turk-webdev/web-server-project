@@ -1,4 +1,4 @@
-package conf;
+package conf.conf;
 
 import java.util.*;
 import java.io.*;
