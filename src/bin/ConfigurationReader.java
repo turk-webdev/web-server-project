@@ -1,4 +1,4 @@
-package parsers;
+package bin;
 
 import java.io.*;
 

@@ -3,7 +3,7 @@
  * Description: This class runs once at ANTIPARAZI start up to parse
  * through the mime.types file and
  *********************************************************************/
-package parsers;
+package bin;
 
 import java.io.*;
 import java.util.ArrayList;

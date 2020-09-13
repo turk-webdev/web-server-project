@@ -1,4 +1,4 @@
-package parsers;
+package bin;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

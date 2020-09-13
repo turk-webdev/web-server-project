@@ -4,8 +4,8 @@
  *********************************************************************/
 
 import bin.RequestHandler;
-import parsers.HttpdConf;
-import parsers.MimeTypes;
+import bin.HttpdConf;
+import bin.MimeTypes;
 
 import java.io.BufferedReader;
 import java.io.IOException;
