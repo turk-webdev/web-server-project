@@ -6,13 +6,13 @@
 import bin.RequestHandler;
 import bin.HttpdConf;
 import bin.MimeTypes;
+import bin.obj.HTTPRequest;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 
 public class WebServer {
@@ -21,6 +21,7 @@ public class WebServer {
     private ServerSocket server;
     private Socket client;
     private int port;
+    private final int MAX_NUM_THREADS = 32;  // Max num threads on a quad core CPU
 
     public static void main(String[] args) {
         WebServer web_server = new WebServer();
@@ -31,19 +32,38 @@ public class WebServer {
         loadConfigs();
         port = Integer.parseInt(httpdConf.getHttpdConf("Listen"));
 
-//        test();
+        Executor service = Executors.newFixedThreadPool(MAX_NUM_THREADS);
+
         try{
             server = new ServerSocket(port);
             while(true){
                 //todo: this is where threading is going to go, threads/Workers.
                 client = server.accept();
-                RequestHandler rh = new RequestHandler();
-                System.out.println("Connection Established!\n");
-                rh.processRequest(new BufferedReader(new InputStreamReader(client.getInputStream())));
+                String request = requestToString(client.getInputStream());
+
+                // If we receive a connection from a client, create a new thread
+                // to listen for and process their request
+                if (client != null) service.execute(new HTTPRequest(request));
             }
         } catch (IOException e){
             System.out.println("IOException");
         }
+    }
+
+    private String requestToString(InputStream client) {
+        String request = "", currLine;
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(client));
+            while ((currLine = br.readLine()) != null) {
+                request += currLine;
+            }
+        } catch (Exception e) {
+            // TODO: Return 400 error
+            e.printStackTrace();
+            return "ERROR";
+        }
+
+        return request;
     }
 
     private void loadConfigs() {
