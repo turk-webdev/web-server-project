@@ -1,7 +1,6 @@
 /**********************************************************************
  * File: HTTPRequest.java
- * Description: This object is used by the RequestHandler to store all
- * fields of an incoming HTTP Request from the client
+ * Description: This threaded object
  *********************************************************************/
 
 package bin.obj;
@@ -14,7 +13,7 @@ import java.io.*;
  * HTTP_METHOD(verb) IDENTIFIER HTTP_VERSION [\n]
  * BODY [\n]
  */
-public class HTTPRequest {
+public class HTTPRequest implements Runnable {
     private String verb, identifier, version; // header vars
     private HashMap<String, String> body = new HashMap<>();
 
@@ -38,10 +37,6 @@ public class HTTPRequest {
         }
     }
 
-    // Getters
-    public String getVerb() { return verb; }
-    public String getIdentifier() { return identifier; }
-    public String getVersion() { return version; }
 
     // DEBUG ONLY
     public void printRequest() {
@@ -51,4 +46,19 @@ public class HTTPRequest {
         }
     }
 
+    /**
+     * When an object implementing interface <code>Runnable</code> is used
+     * to create a thread, starting the thread causes the object's
+     * <code>run</code> method to be called in that separately executing
+     * thread.
+     * <p>
+     * The general contract of the method <code>run</code> is that it may
+     * take any action whatsoever.
+     *
+     * @see Thread#run()
+     */
+    @Override
+    public void run() {
+        // TODO: Write code
+    }
 }
