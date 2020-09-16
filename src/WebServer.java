@@ -3,15 +3,15 @@
  * Description: This is the main class for our ANTIPARAZI web server
  *********************************************************************/
 
-import bin.RequestHandler;
+import bin.HTTPRequestThread;
 import bin.HttpdConf;
 import bin.MimeTypes;
-import bin.obj.HTTPRequest;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
@@ -45,6 +45,9 @@ public class WebServer {
             while(true){
                 // TODO: Thread out request workers here
                 client = server.accept();
+                System.out.println("Hello!");
+                service.execute(new HTTPRequestThread(client.getInputStream(), client.getOutputStream()));
+
             }
         } catch (IOException e){
             System.out.println("IOException");
