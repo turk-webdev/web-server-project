@@ -6,95 +6,63 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
-public class HttpdConf extends ConfigurationReader {
+public class HttpdConf{
 
-    private HashMap<String, String> httpdList;
-    private HashMap<String, String> scriptAliasList;
-    private HashMap<String, String> aliasList;
+    private HashMap<String, String> httpdList; //HashMap for httpd keys and values
+    private HashMap<String, String> scriptAliasList; //HashMap for script alias keys and values
+    private HashMap<String, String> aliasList; //HashMap for alias keys and values
 
-    public HttpdConf(InputStream file_name) {
-        super(file_name);
+    public HttpdConf() {
         httpdList = new HashMap<>();
         scriptAliasList = new HashMap<>();
         aliasList = new HashMap<>();
-        execute();
     }
 
-    @Override
-    public void execute() {
-        //general storage variables for parsing, tokenizer for...tokenizing
-        String currLine, key, value;
-        StringTokenizer tokenizer;
-        try {
-            bufferedReader = new BufferedReader(new InputStreamReader(configFile,"UTF-8"));
-
-            // read the file line by line
-            while ((currLine = bufferedReader.readLine()) != null) {
-                // Ignore blank lines
-                if (currLine.equals("")) {
-                    continue;
-                }
-
-                tokenizer = new StringTokenizer(currLine);
-                String currToken = tokenizer.nextToken();
-
-                // ignore comments
-                if(currToken.equals("#") || currToken.charAt(0) == '#'){
-                    continue;
-                }
-
-                // parsing to handle several exceptions within the httpd.conf file
-                if (currToken.equals("ScriptAlias")) {
-                    key = tokenizer.nextToken();
-                    value = tokenizer.nextToken().replaceAll("^\"|\"$", "");
-                    scriptAliasList.put(key, value);
-                    scriptAliasList.put(value, key);
-                    //second check is if its just an alias, they are also listed one by one
-                }else if (currToken.equals("Alias")){
-                    key = tokenizer.nextToken();
-                    value = tokenizer.nextToken().replaceAll("^\"|\"$", "");
-                    aliasList.put(key, value);
-                    aliasList.put(value, key);
-                    //third check is for Directory Index, special handling involved for multipled listed files
-                } else if (currToken.equals("DirectoryIndex")){
-                    key = currToken;
-                    while(tokenizer.hasMoreTokens()){
-                        value = tokenizer.nextToken().replaceAll("^\"|\"$", "");
-                        httpdList.put(key, value);
-                    }
-                    //if its none of those, then it goes into the httpd list
-                } else {
-                    key = currToken;
-                    value = tokenizer.nextToken().replaceAll("^\"|\"$", "");
-                    httpdList.put(key, value);
-                }
-            }
-            bufferedReader.close();
-        } catch (Exception e) {
-            System.out.println("Exception: " + e);
+    public void printDebug() {
+        System.out.println("~~~~~~~~~~~~~");
+        System.out.println("HttpdList");
+        System.out.println("~~~~~~~~~~~~~");
+        for (String key : httpdList.keySet()) {
+            System.out.printf("%s\t%s\n",key, httpdList.get(key));
+        }
+        System.out.println("~~~~~~~~~~~~~");
+        System.out.println("ScriptAliasList");
+        System.out.println("~~~~~~~~~~~~~");
+        for (String key : scriptAliasList.keySet()) {
+            System.out.printf("%s\t%s\n",key, scriptAliasList.get(key));
+        }
+        System.out.println("~~~~~~~~~~~~~");
+        System.out.println("AliasList");
+        System.out.println("~~~~~~~~~~~~~");
+        for (String key : aliasList.keySet()) {
+            System.out.printf("%s\t%s\n",key, aliasList.get(key));
         }
     }
 
     //standard getter methods
 
-    public String getHttpdConf(String key){
-        if (httpdList.containsKey(key)){
-            return httpdList.get(key);
-        }
-        return null;
-    }
+    public String getHttpd(String key){ return httpdList.get(key); }
 
-    public String get_alias(String key){
-        if(aliasList.containsKey(key)){
-            return aliasList.get(key);
-        }
-        return null;
-    }
+    public String getAlias(String key){ return aliasList.get(key); }
 
-    public String get_script_alias(String key){
-        if(scriptAliasList.containsKey(key)){
-            return scriptAliasList.get(key);
-        }
-        return null;
+    public String getScriptAlias(String key){ return scriptAliasList.get(key); }
+
+    public String putHttpd(String key, String value){
+        //puts it in reverse
+        httpdList.put(value, key);
+        //returns the value after putting it again not-reversed
+        return httpdList.put(key, value);
+    }
+    public String putAlias(String key, String value){
+        //puts it in reverse
+        aliasList.put(value, key);
+        //returns the value after putting it again not-reversed
+        return aliasList.put(key, value);
+    }
+    public String putScriptAlias(String key, String value){
+        //puts it in reverse
+        scriptAliasList.put(value, key);
+        //returns the value after putting it again not-reversed
+        return scriptAliasList.put(key, value);
     }
 }

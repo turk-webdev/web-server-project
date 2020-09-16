@@ -3,8 +3,7 @@
  * Description: This is the main class for our ANTIPARAZI web server
  *********************************************************************/
 
-import bin.HTTPRequestThread;
-import bin.HttpdConf;
+import bin.*;
 import bin.MimeTypes;
 
 import java.io.*;
@@ -16,8 +15,8 @@ import java.util.concurrent.Executors;
 
 
 public class WebServer {
-    private HttpdConf httpdConf;
-    private MimeTypes mimeTypes;
+    private HttpdConf httpdConf = new HttpdConf();
+    private MimeTypes mimeTypes = new MimeTypes();
 
     public static void main(String[] args) {
         WebServer web_server = new WebServer();
@@ -33,10 +32,14 @@ public class WebServer {
         InputStream mimeTypesIS = getClass().getClassLoader().getResourceAsStream("conf/mime.types");
         InputStream httpdConfIS = getClass().getClassLoader().getResourceAsStream("conf/httpd.conf");
 
-        this.mimeTypes = new MimeTypes(mimeTypesIS);
-        this.httpdConf = new HttpdConf(httpdConfIS);
+        MimeTypesParser mimeParser = new MimeTypesParser(mimeTypes);
+        mimeParser.parse(mimeTypesIS);
+        HttpdConfParser httpdConfParser = new HttpdConfParser(httpdConf);
+        httpdConfParser.parse(httpdConfIS);
 
-        port = Integer.parseInt(httpdConf.getHttpdConf("Listen"));
+        httpdConf.printDebug();
+
+        port = Integer.parseInt(httpdConf.getHttpd("Listen"));
 
         Executor service = Executors.newFixedThreadPool(32);
 
@@ -45,7 +48,6 @@ public class WebServer {
             while(true){
                 // TODO: Thread out request workers here
                 client = server.accept();
-                System.out.println("Hello!");
                 service.execute(new HTTPRequestThread(client.getInputStream(), client.getOutputStream()));
 
             }
