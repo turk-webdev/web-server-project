@@ -6,6 +6,7 @@
 import bin.HTTPRequestThread;
 import bin.HttpdConf;
 import bin.MimeTypes;
+import bin.MimeTypesParser;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -17,7 +18,7 @@ import java.util.concurrent.Executors;
 
 public class WebServer {
     private HttpdConf httpdConf;
-    private MimeTypes mimeTypes;
+    private MimeTypes mimeTypes = new MimeTypes();
 
     public static void main(String[] args) {
         WebServer web_server = new WebServer();
@@ -33,7 +34,8 @@ public class WebServer {
         InputStream mimeTypesIS = getClass().getClassLoader().getResourceAsStream("conf/mime.types");
         InputStream httpdConfIS = getClass().getClassLoader().getResourceAsStream("conf/httpd.conf");
 
-        this.mimeTypes = new MimeTypes(mimeTypesIS);
+        MimeTypesParser mimeParser = new MimeTypesParser(mimeTypes);
+        mimeParser.parse(mimeTypesIS);
         this.httpdConf = new HttpdConf(httpdConfIS);
 
         port = Integer.parseInt(httpdConf.getHttpdConf("Listen"));
@@ -45,7 +47,6 @@ public class WebServer {
             while(true){
                 // TODO: Thread out request workers here
                 client = server.accept();
-                System.out.println("Hello!");
                 service.execute(new HTTPRequestThread(client.getInputStream(), client.getOutputStream()));
 
             }
