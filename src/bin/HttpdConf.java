@@ -8,9 +8,9 @@ import java.util.StringTokenizer;
 
 public class HttpdConf{
 
-    private HashMap<String, String> httpdList;
-    private HashMap<String, String> scriptAliasList;
-    private HashMap<String, String> aliasList;
+    private HashMap<String, String> httpdList; //HashMap for httpd keys and values
+    private HashMap<String, String> scriptAliasList; //HashMap for script alias keys and values
+    private HashMap<String, String> aliasList; //HashMap for alias keys and values
 
     public HttpdConf() {
         httpdList = new HashMap<>();
