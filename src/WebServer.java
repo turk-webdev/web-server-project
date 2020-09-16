@@ -3,10 +3,8 @@
  * Description: This is the main class for our ANTIPARAZI web server
  *********************************************************************/
 
-import bin.HTTPRequestThread;
-import bin.HttpdConf;
+import bin.*;
 import bin.MimeTypes;
-import bin.MimeTypesParser;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -17,7 +15,7 @@ import java.util.concurrent.Executors;
 
 
 public class WebServer {
-    private HttpdConf httpdConf;
+    private HttpdConf httpdConf = new HttpdConf();
     private MimeTypes mimeTypes = new MimeTypes();
 
     public static void main(String[] args) {
@@ -36,9 +34,12 @@ public class WebServer {
 
         MimeTypesParser mimeParser = new MimeTypesParser(mimeTypes);
         mimeParser.parse(mimeTypesIS);
-        this.httpdConf = new HttpdConf(httpdConfIS);
+        HttpdConfParser httpdConfParser = new HttpdConfParser(httpdConf);
+        httpdConfParser.parse(httpdConfIS);
 
-        port = Integer.parseInt(httpdConf.getHttpdConf("Listen"));
+        httpdConf.printDebug();
+
+        port = Integer.parseInt(httpdConf.getHttpd("Listen"));
 
         Executor service = Executors.newFixedThreadPool(32);
 
