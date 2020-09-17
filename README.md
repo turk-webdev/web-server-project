@@ -8,6 +8,5 @@ Project Structure
   |-auth (contains auth check code)
   |-bin (contains main server code)
   |-conf (conf files to be read)
-  |-parsers (code to read & parse conf files)
   |-public_html (front-end test stuff)
 ```
