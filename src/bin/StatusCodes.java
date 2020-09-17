@@ -50,7 +50,7 @@ public class StatusCodes {
 
     public StatusCodes() {
         statusCodes = new HashMap<>();
-        statusCodes.put(200,"Ok");
+        statusCodes.put(200,"OK");
         statusCodes.put(201,"Created");
         statusCodes.put(204,"No Content");
         statusCodes.put(304,"Not Modified");
