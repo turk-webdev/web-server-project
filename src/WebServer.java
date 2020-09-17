@@ -37,8 +37,6 @@ public class WebServer {
         HttpdConfParser httpdConfParser = new HttpdConfParser(httpdConf);
         httpdConfParser.parse(httpdConfIS);
 
-        httpdConf.printDebug();
-
         port = Integer.parseInt(httpdConf.getHttpd("Listen"));
 
         Executor service = Executors.newFixedThreadPool(32);
@@ -48,7 +46,7 @@ public class WebServer {
             while(true){
                 // TODO: Thread out request workers here
                 client = server.accept();
-                service.execute(new HTTPRequestThread(client.getInputStream(), client.getOutputStream()));
+                service.execute(new HTTPRequestThread(client.getInputStream(), client.getOutputStream(), httpdConf, mimeTypes));
 
             }
         } catch (IOException e){

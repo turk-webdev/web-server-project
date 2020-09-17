@@ -13,7 +13,6 @@ public class MimeTypesParser {
     }
 
     public void parse(InputStream file) {
-        System.out.println("Parsing mime types");
         BufferedReader br = new BufferedReader(new InputStreamReader(file));
         try {
             String currLine;
@@ -30,7 +29,7 @@ public class MimeTypesParser {
                 }
             }
 
-            mimeTypesObj.printTypes();
+            br.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

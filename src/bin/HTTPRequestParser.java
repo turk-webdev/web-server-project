@@ -46,10 +46,12 @@ public class HTTPRequestParser {
 
             // With the header parsed, the whole body follows a k-v pair pattern
             // Populate the HTTPRequest object's HashMap representing the body
-            while ((currLine = inputReader.readLine()) != null) {
+            while ((currLine = inputReader.readLine()) != null && !currLine.equals("")) {
                 st = new StringTokenizer(currLine);
                 requestObj.put(st.nextToken(),st.nextToken());
             }
+
+            inputReader.close();
         } catch (Exception e) {
             e.printStackTrace();
             return 400;
