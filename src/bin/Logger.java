@@ -15,7 +15,7 @@ public class Logger {
         this.httpdConf = httpdConf;
     }
 
-    //TODO: ad
+    //TODO: add response functionality, implement in WebServer
     public void log(HTTPRequest request, String username)
             throws IOException {
         String logFile = httpdConf.getHttpd("LogFile");
