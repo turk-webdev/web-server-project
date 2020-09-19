@@ -5,6 +5,8 @@ package bin;
  * deposit it into the provided HTTPRequest object
  *********************************************************************/
 
+import bin.obj.HTTPRequest;
+
 import java.io.BufferedReader;
 import java.util.StringTokenizer;
 

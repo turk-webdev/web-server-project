@@ -4,7 +4,7 @@
  * that will be sent back to the client
  *********************************************************************/
 
-package bin;
+package bin.obj;
 /*
 XXX Label           Description
 ------------------------------------------------------
