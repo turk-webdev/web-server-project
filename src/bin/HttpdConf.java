@@ -39,12 +39,13 @@ public class HttpdConf{
         }
     }
 
+    public boolean httpdContainsKey(String key) { return httpdList.containsKey(key); }
+    public boolean aliasContainsKey(String key) { return aliasList.containsKey(key); }
+    public boolean scriptAliasContainsKey(String key) { return scriptAliasList.containsKey(key); }
+
     //standard getter methods
-
     public String getHttpd(String key){ return httpdList.get(key); }
-
     public String getAlias(String key){ return aliasList.get(key); }
-
     public String getScriptAlias(String key){ return scriptAliasList.get(key); }
 
     public String putHttpd(String key, String value){

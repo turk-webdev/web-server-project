@@ -7,7 +7,9 @@ Project Structure
 |-src  
   |-auth (contains auth check code)
   |-bin (contains main server code)
+    |-obj (contains helper objects for bin)
+      |-verb (contains HTTP verb implementations)
+      |-parser (contains parsers for various implementations)
   |-conf (conf files to be read)
-  |-parsers (code to read & parse conf files)
   |-public_html (front-end test stuff)
 ```

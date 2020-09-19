@@ -1,9 +1,11 @@
-package bin;
+package bin.obj.parser;
 /**********************************************************************
  * File: HTTPRequestParser.java
  * Description: This is a parser for the input given by the thread, and will
  * deposit it into the provided HTTPRequest object
  *********************************************************************/
+
+import bin.obj.HTTPRequest;
 
 import java.io.BufferedReader;
 import java.util.StringTokenizer;
