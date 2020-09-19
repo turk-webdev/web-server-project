@@ -1,4 +1,4 @@
-package bin;
+package bin.obj.parser;
 
 import bin.obj.MimeTypes;
 

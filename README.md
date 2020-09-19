@@ -9,6 +9,7 @@ Project Structure
   |-bin (contains main server code)
     |-obj (contains helper objects for bin)
       |-verb (contains HTTP verb implementations)
+      |-parser (contains parsers for various implementations)
   |-conf (conf files to be read)
   |-public_html (front-end test stuff)
 ```

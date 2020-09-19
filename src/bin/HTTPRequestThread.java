@@ -11,6 +11,7 @@ import bin.obj.HTTPRequest;
 import bin.obj.HTTPResponse;
 import bin.obj.MimeTypes;
 import bin.obj.URIResource;
+import bin.obj.parser.HTTPRequestParser;
 
 import java.io.*;
 import java.text.SimpleDateFormat;

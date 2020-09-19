@@ -5,6 +5,8 @@
 
 import bin.*;
 import bin.obj.MimeTypes;
+import bin.obj.parser.HttpdConfParser;
+import bin.obj.parser.MimeTypesParser;
 
 import java.io.*;
 import java.net.ServerSocket;
