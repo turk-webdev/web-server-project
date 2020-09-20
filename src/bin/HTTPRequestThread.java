@@ -39,18 +39,19 @@ public class HTTPRequestThread implements Runnable {
         // Init local objects
         HTTPRequest requestObj = new HTTPRequest();
         HTTPRequestParser requestParser = new HTTPRequestParser();
-        HTTPResponse responseObj = new HTTPResponse();
+        HTTPResponse responseObj = new HTTPResponse(clientOutput);
 
-        // Mandatory response fields
+        // Mandatory response fields - Server & Date
         responseObj.putResponseHeader("Server","ANTIPARAZI/1.0");
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         responseObj.putResponseHeader("Date",formatter.format(new Date()));
 
         int parseCode = requestParser.parseRequest(requestObj, new BufferedReader(new InputStreamReader(clientInput)));
-        String verb = requestObj.getVerb(), uri = requestObj.getIdentifier();
+
         if (parseCode == 400) {
-            // TODO: Send bad request response
-            System.out.println("400: BAD REQUEST");
+            responseObj.setBody("BAD REQUEST");
+            responseObj.setStatusCode(parseCode);
+            responseObj.sendResponse();
             return;
         }
 

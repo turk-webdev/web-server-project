@@ -48,19 +48,24 @@ public class HTTPRequestParser {
 
             // With the header parsed, the whole body follows a k-v pair pattern
             // Populate the HTTPRequest object's HashMap representing the body
-            while ((currLine = inputReader.readLine()) != null && !currLine.equals("")) {
-                st = new StringTokenizer(currLine);
-                requestObj.put(st.nextToken(),st.nextToken());
+            boolean readingBody = false;
+            StringBuilder body =  new StringBuilder();
+            while ((currLine = inputReader.readLine()) != null) {
+                if (currLine.equals("")) {
+                    readingBody = true;
+                    continue;
+                }
+
+                if (readingBody) {
+                    body.append(currLine);
+                } else {
+                    st = new StringTokenizer(currLine);
+                    requestObj.put(st.nextToken(),st.nextToken());
+                }
+
             }
 
-            // Once we get to an empty line, we are about to get the request body
-            // Which will be saved to a local String
-            // TODO: Something here is broken, fix it
-//            String body = "";
-//            while ((currLine = inputReader.readLine()) != null) {
-//                body += currLine;
-//            }
-//            requestObj.setBody(body);
+            if (readingBody) requestObj.setBody(body.toString());
 
             inputReader.close();
         } catch (Exception e) {

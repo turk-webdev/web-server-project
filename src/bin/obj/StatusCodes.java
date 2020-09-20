@@ -61,7 +61,7 @@ public class StatusCodes {
         statusCodes.put(500,"Internal Server Error");
     }
 
-    public String getTitleFromCode(int code) {
+    public static String getTitleFromCode(int code) {
         return statusCodes.get(code);
     }
 
@@ -70,7 +70,7 @@ public class StatusCodes {
      * @param title value to compare
      * @return code on success, -1 if match not found
      */
-    public int getCodeFromTitle(String title) {
+    public static int getCodeFromTitle(String title) {
         for (int key: statusCodes.keySet()) {
             if ((statusCodes.get(key).toUpperCase()).equals(title.toUpperCase())) {
                 return key;
