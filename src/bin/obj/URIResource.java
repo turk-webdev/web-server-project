@@ -8,6 +8,7 @@ package bin.obj;
 
 import bin.HTTPRequestThread;
 
+import java.io.File;
 import java.util.*;
 
 public class URIResource {
@@ -85,5 +86,14 @@ public class URIResource {
     public void isScriptAliased(boolean isScriptAliased) { this.isScriptAliased = isScriptAliased; }
     public boolean isAliased() { return isAliased; }
     public boolean isScriptAliased() { return isScriptAliased; }
+    public boolean checkFileExists() {
+        String contents[] = new File(getPathWithDest()).list();
+
+        for (String currFile : contents) {
+            if (currFile.equals(destination)) return true;
+        }
+
+        return false;
+    }
 
 }

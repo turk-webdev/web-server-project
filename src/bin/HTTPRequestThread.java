@@ -7,6 +7,7 @@
 
 package bin;
 
+import auth.AuthDriver;
 import auth.Htpassword;
 import bin.obj.*;
 import bin.obj.parser.HTTPRequestParser;
@@ -46,7 +47,6 @@ public class HTTPRequestThread implements Runnable {
         int parseCode = requestParser.parseRequest(requestObj, new BufferedReader(new InputStreamReader(clientInput)));
 
         if (parseCode == 400) {
-            responseObj.setBody("BAD REQUEST");
             responseObj.setStatusCode(parseCode);
             responseObj.sendResponse();
             return;
@@ -57,22 +57,31 @@ public class HTTPRequestThread implements Runnable {
         uriParser.parseURI(requestObj.getIdentifier(), uriObj, this);
 
         // Check if directory is protected by .htaccess
-        if (isProtectedDir(uriObj.getPathToDest())) {
-            // TODO: Check auth header
+        AuthDriver authDriver = new AuthDriver();
+        if (authDriver.isProtectedDir(uriObj.getPathToDest(), getHttpd("AccessFile"))) {
+            int authCode = authDriver.run();
+            if (authCode != 200) {
+                responseObj.setStatusCode(authCode);
+                responseObj.sendResponse();
+                return;
+            }
         }
 
-
-
-    }
-
-    boolean isProtectedDir(String path) {
-        String contents[] = new File(path).list();
-
-        for (String currFile : contents) {
-            if (currFile.equals(getHttpd("AccessFile"))) return true;
+        // Check if file exists
+        if (!uriObj.checkFileExists()) {
+          responseObj.setStatusCode(404);
+            responseObj.sendResponse();
+            return;
         }
 
-        return false;
+        if (uriObj.isScriptAliased()) {
+            // TODO: script processing here
+            return;
+        }
+
+        // TODO: Verb processing here
+
+
     }
 
     // htpassword functions
