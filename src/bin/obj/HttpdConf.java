@@ -1,4 +1,4 @@
-package bin;
+package bin.obj;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

@@ -4,6 +4,7 @@
  *********************************************************************/
 
 import bin.*;
+import bin.obj.HttpdConf;
 import bin.obj.MimeTypes;
 import bin.obj.parser.HttpdConfParser;
 import bin.obj.parser.MimeTypesParser;
