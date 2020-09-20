@@ -6,7 +6,7 @@ public class Htaccess {
 
     private HashMap <String, String> htaccessList;
 
-    public Htaccess(){htaccessList = new HashMap<>();}
+    public Htaccess(){ htaccessList = new HashMap<>(); }
 
     public boolean containsKey(String key){ return htaccessList.containsKey(key); }
 
