@@ -1,4 +1,13 @@
 package bin.obj.verb;
 
-public class Post {
+import bin.HTTPRequestThread;
+import bin.obj.HTTPRequest;
+import bin.obj.HTTPResponse;
+import bin.obj.HTTPVerb;
+
+public class Post extends HTTPVerb {
+    @Override
+    public void execute(HTTPResponse responseObj, HTTPRequest requestObj, HTTPRequestThread worker) {
+
+    }
 }

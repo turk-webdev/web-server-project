@@ -1,4 +1,13 @@
 package bin.obj.verb;
 
-public class Delete {
+import bin.HTTPRequestThread;
+import bin.obj.HTTPRequest;
+import bin.obj.HTTPResponse;
+import bin.obj.HTTPVerb;
+
+public class Delete extends HTTPVerb {
+    @Override
+    public void execute(HTTPResponse responseObj, HTTPRequest requestObj, HTTPRequestThread worker) {
+
+    }
 }
