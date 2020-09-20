@@ -1,5 +1,8 @@
 package auth;
 
+import bin.obj.parser.HtaccessParser;
+
+import java.io.InputStream;
 import java.util.Base64;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
@@ -9,9 +12,11 @@ public class Authentication {
     private Htpassword htpasswordObj;
     private Htaccess htaccessObj;
 
-    public Authentication(Htpassword htpasswordObj, Htaccess htaccessObj){
+    public Authentication(Htpassword htpasswordObj, InputStream file){
         this.htpasswordObj = htpasswordObj;
-        this.htaccessObj = htaccessObj;
+        htaccessObj = new Htaccess();
+        HtaccessParser htaccessParser = new HtaccessParser(htaccessObj);
+        htaccessParser.parse(file);
     }
 
     public boolean authCheck(String auth){

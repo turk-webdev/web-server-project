@@ -7,6 +7,7 @@
 
 package bin;
 
+import auth.Htpassword;
 import bin.obj.*;
 import bin.obj.parser.HTTPRequestParser;
 import bin.obj.parser.URIParser;
@@ -20,20 +21,16 @@ public class HTTPRequestThread implements Runnable {
     private OutputStream clientOutput;
     private HttpdConf httpdConf;
     private MimeTypes mimeTypes;
+    private Htpassword htpassword;
 
-    public HTTPRequestThread(InputStream clientInput, OutputStream clientOutput, HttpdConf httpdConf, MimeTypes mimeTypes) {
+    public HTTPRequestThread(InputStream clientInput, OutputStream clientOutput, HttpdConf httpdConf, MimeTypes mimeTypes, Htpassword htpassword) {
         this.clientInput = clientInput;
         this.clientOutput = clientOutput;
         this.httpdConf = httpdConf;
         this.mimeTypes = mimeTypes;
+        this.htpassword = htpassword;
     }
 
-    /**
-     * 1) Delegate parse & store the HTTP Request from clientInput
-     * 2) Go through webserver workflow
-     * 3) Delegate building of response
-     * 4) Send response to clientOutput
-     */
     @Override
     public void run() {
         // Init local objects
@@ -78,11 +75,15 @@ public class HTTPRequestThread implements Runnable {
         return false;
     }
 
+    // htpassword functions
+    public String getHtpassword(String key) { return htpassword.get(key); }
+    public String putHtpassword(String key, String value) { return htpassword.put(key, value); }
+    public boolean htpasswordContainsKey(String key) { return htpassword.containsKey(key); }
+
     // httpd.conf functions
     public boolean httpdContainsKey(String key) { return httpdConf.httpdContainsKey(key); }
     public boolean aliasContainsKey(String key) { return httpdConf.aliasContainsKey(key); }
     public boolean scriptAliasContainsKey(String key) { return httpdConf.scriptAliasContainsKey(key); }
-
     public String getHttpd(String key){ return httpdConf.getHttpd(key); }
     public String getAlias(String key){ return httpdConf.getAlias(key); }
     public String getScriptAlias(String key){ return httpdConf.getScriptAlias(key); }

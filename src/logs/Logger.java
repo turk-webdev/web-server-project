@@ -1,4 +1,6 @@
-package bin;
+package logs;
+
+import bin.obj.HttpdConf;
 
 import java.io.IOException;
 import java.io.FileWriter;
