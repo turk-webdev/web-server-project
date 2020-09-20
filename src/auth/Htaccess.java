@@ -1,4 +1,4 @@
-package bin.obj;
+package auth;
 
 import java.util.HashMap;
 

@@ -46,7 +46,6 @@ public class WebServer {
         try{
             server = new ServerSocket(port);
             while(true){
-                // TODO: Thread out request workers here
                 client = server.accept();
                 service.execute(new HTTPRequestThread(client.getInputStream(), client.getOutputStream(), httpdConf, mimeTypes));
 

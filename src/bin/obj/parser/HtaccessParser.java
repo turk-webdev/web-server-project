@@ -1,12 +1,10 @@
 package bin.obj.parser;
 
-import bin.obj.Htaccess;
+import auth.Htaccess;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
-import java.util.StringTokenizer;
 
 public class HtaccessParser {
 
