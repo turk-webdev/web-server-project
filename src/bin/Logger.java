@@ -7,6 +7,8 @@ import java.time.ZonedDateTime;
 import java.time.format.TextStyle;
 import java.util.Locale;
 
+import static java.lang.String.format;
+
 public class Logger {
 
     private HttpdConf httpdConf;
@@ -16,16 +18,24 @@ public class Logger {
     }
 
     //TODO: add response functionality, implement in WebServer
-    public void log(HTTPRequest request, String username)
+    //List of needed variables for log
+    //-request: InetAddress
+    //-request: username
+    //-request: method
+    //-request: identifier
+    //-request: version
+    //-response: statuscode
+    //-response: bytelength
+    // example (from wiki): 127.0.0.1 user-identifier frank [10/Oct/2000:13:55:36 -0700] "GET /apache_pb.gif HTTP/1.0" 200 2326
+    public void log(String iNetAddress, String username, String method, String identifier, int version, int statusCode, int byteLength)
             throws IOException {
         String logFile = httpdConf.getHttpd("LogFile");
         FileWriter fileWriter = new FileWriter(logFile, true);
         PrintWriter printWriter = new PrintWriter(fileWriter);
-
-        String logMessage = request.getIdentifier() + "-" +
-                username + " " + this.getDateTime(ZonedDateTime.now());
+        String logMessage = String.format("%s %s %s [%s] %s %s %s %s %s\n",
+                iNetAddress, "-", username, this.getDateTime(ZonedDateTime.now()),
+                method, identifier, version, statusCode, byteLength);
         printWriter.printf("%s", logMessage);
-
         printWriter.close();
     }
 
