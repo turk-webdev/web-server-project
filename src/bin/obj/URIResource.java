@@ -1,103 +1,89 @@
+/**********************************************************************
+ * File: URIResource.java
+ * Description: This object is responsible for storing the final URI
+ * to be referenced throughout the request/response workflow.
+ *********************************************************************/
+
 package bin.obj;
 
-import bin.HttpdConf;
+import bin.HTTPRequestThread;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class URIResource {
-    private String originalPath;
-    private ArrayList<String> modifiedUri = new ArrayList<>();
-    private HttpdConf httpdConf;
-    private boolean isScriptAliased = false;
+    private HashMap<String, String> args;
+    private ArrayList<String> path;
+    private String destination;
+    private boolean isAliased, isScriptAliased;
 
-    public URIResource(String originalPath, HttpdConf httpdConf) {
-        this.originalPath = originalPath;
-        this.httpdConf = httpdConf;
+    public URIResource() {
+        args = new HashMap<>();
+        path = new ArrayList<>();
+        destination = "";
+        isAliased = false;
+        isScriptAliased = false;
     }
 
-    public void run() {
-        // First resolve if the path is aliased, script aliased, or neither
-        // if neither, append DOC_ROOT
-        if (isAliased(originalPath)) {
-            originalPath = httpdConf.getAlias(originalPath);
-        } else if (isScriptAliased(originalPath)) {
-            originalPath = httpdConf.getScriptAlias(originalPath);
-        } else {
-            originalPath = httpdConf.getHttpd("DocumentRoot") + originalPath;
+    // Setters & Builders
+    public void setDestination(String destination) { this.destination = destination; }
+    public String getDestination() { return destination; }
+    public void putArgs(String key, String val) { args.put(key,val); }
+    public void addPath(String token) { path.add(token); }
+
+    public String getPathToDest() {
+        StringBuilder re = new StringBuilder();
+
+        for (String curr : path) {
+            re.append("/").append(curr);
         }
 
-        // Parse it into our arraylist for easier checks
-        parsePath(originalPath);
-        if (!isFile()) {
-            try {
-                String contents[] = new File(getModifiedUriString()).list();
-                for (String currFile : contents) {
-                    if (currFile.contains("index")) modifiedUri.add(currFile);
+        return re.toString();
+    }
+
+    public String getPathWithDest() {
+        StringBuilder re = new StringBuilder();
+
+        for (String curr : path) {
+            re.append("/").append(curr);
+        }
+
+        re.append(destination);
+
+        return re.toString();
+    }
+
+    public String getFullUri() {
+        StringBuilder uri = new StringBuilder();
+
+        // Add each level in the path, then add the destination
+        for (String curr : path) uri.append("/").append(curr);
+        uri.append("/").append(destination);
+
+        // If we have any params/args, add those too
+        if (args.size() > 0) {
+            uri.append("?");
+
+            // TODO: Look over this again
+            // There is a more elegant solution using Iterator, but I am too lazy/burnt right now - come back to it
+            int iterations = 0;
+            for (String key : args.keySet()) {
+                if (iterations == 0) {
+                    uri.append(key).append("=").append(args.get(key));
+                } else {
+                    uri.append("&").append(key).append("=").append(args.get(key));
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+
+                iterations++;
             }
         }
 
+        return uri.toString();
     }
 
-    public String getModifiedUriString() {
-        String re = "";
-        for (String curr : modifiedUri) {
-            re += "/" + curr;
-        }
-        return re;
-    }
-
-    public boolean uriContains(String uri, String contains, boolean isFile) {
-        // If the uri is a path to a file, we want to get the uri to just be the parent dir
-        if (isFile) {
-            ArrayList<String> tmp = new ArrayList<>();
-            StringTokenizer st = new StringTokenizer(uri,"/");
-            while (st.hasMoreTokens())tmp.add(st.nextToken());
-
-            uri = "";
-            for (int i=0; i<tmp.size()-1; i++) {
-                uri += "/" + tmp.get(i);
-            }
-        }
-
-        // Query into the uri - if there is a match of the contains string, the file exists
-        String contents[] = new File(uri).list();
-        for (String currFile : contents) {
-            if (currFile.contains(contains)) return true;
-        }
-
-        return false;
-    }
-
-    private void parsePath(String path) {
-        modifiedUri.clear();
-        StringTokenizer st = new StringTokenizer(path,"/");
-        while (st.hasMoreTokens())  modifiedUri.add(st.nextToken());
-    }
-
-    private boolean isAliased(String path) {
-        return httpdConf.aliasContainsKey(path);
-    }
-
-    private boolean isScriptAliased(String path) {
-        isScriptAliased = httpdConf.scriptAliasContainsKey(path);
-        return isScriptAliased;
-    }
-
-    public boolean isScriptAliased() {
-        return isScriptAliased;
-    }
-
-    public boolean isFile() {
-        return modifiedUri.get(modifiedUri.size()-1)
-                .matches("\\w+\\.\\w+|\\W+\\.\\w+");
-    }
-
-
+    // Public methods
+    public void isAliased(boolean isAliased) { this.isAliased = isAliased; }
+    public void isScriptAliased(boolean isScriptAliased) { this.isScriptAliased = isScriptAliased; }
+    public boolean isAliased() { return isAliased; }
+    public boolean isScriptAliased() { return isScriptAliased; }
 
 }

@@ -7,11 +7,9 @@
 
 package bin;
 
-import bin.obj.HTTPRequest;
-import bin.obj.HTTPResponse;
-import bin.obj.MimeTypes;
-import bin.obj.URIResource;
+import bin.obj.*;
 import bin.obj.parser.HTTPRequestParser;
+import bin.obj.parser.URIParser;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -56,55 +54,35 @@ public class HTTPRequestThread implements Runnable {
             return;
         }
 
-        URIResource uriObj = new URIResource(uri, httpdConf);
+        URIResource uriObj = new URIResource();
+        URIParser uriParser = new URIParser();
+        uriParser.parseURI(requestObj.getIdentifier(), uriObj, this);
 
-        // This object will go through all of the path parsing in the workflow
-        uriObj.run();
-        String absolutePath = uriObj.getModifiedUriString();
-
-        // Does htaccess exist?
-        if (uriObj.uriContains(absolutePath, ".htaccess", true)) {
-            // TODO: Check Auth header
-            // If yes, is there an Auth header?
-            // If no, 401
-        } else {
-            // If htaccess does not exist, check if file exists
-            File file = new File(absolutePath);
-            if (file.exists()) {
-
-            } else {
-                // TODO: Send 404
-                System.out.println("404: FILE NOT FOUND");
-                return;
-            }
+        // Check if directory is protected by .htaccess
+        if (isProtectedDir(uriObj.getPathToDest())) {
+            // TODO: Check auth header
         }
 
-        if (uriObj.isScriptAliased()) {
-            // TODO: Execute script
-        } else {
-            switch (verb) {
-                case "POST":
-                    post();
-                case "PUT":
-                    put();
-                case "HEAD":
-                    head();
-                case "GET":
-                    get();
-                case "DELETE":
-                    delete();
-                    break;
-                default:
-                    // TODO: Throw 400 error
-            }
-        }
+
 
     }
 
-    // HTTP Verbs
-    void put() {}
-    void post() {}
-    void head() {}
-    void get() {}
-    void delete() {}
+    boolean isProtectedDir(String path) {
+        String contents[] = new File(path).list();
+
+        for (String currFile : contents) {
+            if (currFile.equals(getHttpd("AccessFile"))) return true;
+        }
+
+        return false;
+    }
+
+    // httpd.conf functions
+    public boolean httpdContainsKey(String key) { return httpdConf.httpdContainsKey(key); }
+    public boolean aliasContainsKey(String key) { return httpdConf.aliasContainsKey(key); }
+    public boolean scriptAliasContainsKey(String key) { return httpdConf.scriptAliasContainsKey(key); }
+
+    public String getHttpd(String key){ return httpdConf.getHttpd(key); }
+    public String getAlias(String key){ return httpdConf.getAlias(key); }
+    public String getScriptAlias(String key){ return httpdConf.getScriptAlias(key); }
 }

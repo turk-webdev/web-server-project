@@ -4,16 +4,17 @@ import java.util.HashMap;
 
 public class HTTPRequest {
     private String verb, identifier, version;
-    private HashMap<String, String> body;
+    private HashMap<String, String> headers;
+    private String body;
 
     public HTTPRequest() {
-        body = new HashMap<>();
+        headers = new HashMap<>();
     }
 
     public void printRequest() {
         System.out.printf("%s %s %s\n",verb,identifier,version);
-        for (String key: body.keySet()) {
-            System.out.printf("%s : %s\n",key,body.get(key));
+        for (String key: headers.keySet()) {
+            System.out.printf("%s : %s\n",key, headers.get(key));
         }
     }
 
@@ -28,12 +29,14 @@ public class HTTPRequest {
     public void setVersion(String version) { this.version = version; }
 
     // Hashmap helper functions
-    public boolean containsKey(String key) { return body.containsKey(key); }
-    public boolean containsValue(String value) { return body.containsValue(value); }
-    public boolean isEmpty() { return body.isEmpty(); }
-    public String put(String key, String value) { return body.put(key, value); }
-    public String get(String key) { return body.get(key); }
-    public int size() { return body.size(); }
+    public boolean containsKey(String key) { return headers.containsKey(key); }
+    public boolean containsValue(String value) { return headers.containsValue(value); }
+    public boolean isEmpty() { return headers.isEmpty(); }
+    public String put(String key, String value) { return headers.put(key, value); }
+    public String get(String key) { return headers.get(key); }
+    public String getBody() { return body; }
+    public void setBody(String body) { this.body = body; }
+    public int size() { return headers.size(); }
 
 
 }

@@ -1,6 +1,6 @@
 package bin.obj.parser;
 
-import bin.HttpdConf;
+import bin.obj.HttpdConf;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

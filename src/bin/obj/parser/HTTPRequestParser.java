@@ -53,6 +53,14 @@ public class HTTPRequestParser {
                 requestObj.put(st.nextToken(),st.nextToken());
             }
 
+            // Once we get to an empty line, we are about to get the request body
+            // Which will be saved to a local String
+            String body = "";
+            while ((currLine = inputReader.readLine()) != null) {
+                body += currLine;
+            }
+            requestObj.setBody(body);
+
             inputReader.close();
         } catch (Exception e) {
             e.printStackTrace();
