@@ -14,19 +14,18 @@ import bin.obj.parser.HTTPRequestParser;
 import bin.obj.parser.URIParser;
 
 import java.io.*;
+import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class HTTPRequestThread implements Runnable {
-    private InputStream clientInput;
-    private OutputStream clientOutput;
+    private Socket client;
     private HttpdConf httpdConf;
     private MimeTypes mimeTypes;
     private Htpassword htpassword;
 
-    public HTTPRequestThread(InputStream clientInput, OutputStream clientOutput, HttpdConf httpdConf, MimeTypes mimeTypes, Htpassword htpassword) {
-        this.clientInput = clientInput;
-        this.clientOutput = clientOutput;
+    public HTTPRequestThread(Socket client, HttpdConf httpdConf, MimeTypes mimeTypes, Htpassword htpassword) {
+        this.client = client;
         this.httpdConf = httpdConf;
         this.mimeTypes = mimeTypes;
         this.htpassword = htpassword;
@@ -34,6 +33,16 @@ public class HTTPRequestThread implements Runnable {
 
     @Override
     public void run() {
+        OutputStream clientOutput;
+        InputStream clientInput;
+        try {
+            clientInput = client.getInputStream();
+            clientOutput = client.getOutputStream();
+        } catch (IOException e) {
+            System.out.println("Error establishing server I/O");
+            e.printStackTrace();
+            return;
+        }
         // Init local objects
         HTTPRequest requestObj = new HTTPRequest();
         HTTPRequestParser requestParser = new HTTPRequestParser();
@@ -47,30 +56,50 @@ public class HTTPRequestThread implements Runnable {
         int parseCode = requestParser.parseRequest(requestObj, new BufferedReader(new InputStreamReader(clientInput)));
 
         if (parseCode == 400) {
+            System.out.printf("[%s] Line 50: 400 code\n",Thread.currentThread().getName());
             responseObj.setStatusCode(parseCode);
             responseObj.sendResponse();
+            try {
+                client.close();
+            } catch (IOException e) {
+                System.out.println("Error closing connection");
+                e.printStackTrace();
+            }
             return;
         }
 
         URIResource uriObj = new URIResource();
         URIParser uriParser = new URIParser();
         uriParser.parseURI(requestObj.getIdentifier(), uriObj, this);
+        requestObj.setUriObj(uriObj);
 
-        // Check if directory is protected by .htaccess
+        // Check if directory is protected by testing
         AuthDriver authDriver = new AuthDriver();
         if (authDriver.isProtectedDir(uriObj.getPathToDest(), getHttpd("AccessFile"))) {
             int authCode = authDriver.run(requestObj, uriObj.getPathToDest()+"/"+getHttpd("AccessFile"), this);
             if (authCode != 200) {
                 responseObj.setStatusCode(authCode);
                 responseObj.sendResponse();
+                try {
+                    client.close();
+                } catch (IOException e) {
+                    System.out.println("Error closing connection");
+                    e.printStackTrace();
+                }
                 return;
             }
         }
 
         // Check if file exists
         if (!uriObj.checkFileExists()) {
-          responseObj.setStatusCode(404);
+            responseObj.setStatusCode(404);
             responseObj.sendResponse();
+            try {
+                client.close();
+            } catch (IOException e) {
+                System.out.println("Error closing connection");
+                e.printStackTrace();
+            }
             return;
         }
 
@@ -79,9 +108,17 @@ public class HTTPRequestThread implements Runnable {
             return;
         }
 
-        // TODO: Verb processing here
+        // With every check complete, we can now process the verb
+        HTTPVerb verbObj = HTTPVerb.getVerb(requestObj.getVerb().toUpperCase());
+        verbObj.execute(responseObj, requestObj, this);
 
-
+        // With everything done, we close the client connection
+        try {
+            client.close();
+        } catch (IOException e) {
+            System.out.println("Something went horribly wrong");
+            e.printStackTrace();
+        }
     }
 
     // htpassword functions
@@ -96,4 +133,7 @@ public class HTTPRequestThread implements Runnable {
     public String getHttpd(String key){ return httpdConf.getHttpd(key); }
     public String getAlias(String key){ return httpdConf.getAlias(key); }
     public String getScriptAlias(String key){ return httpdConf.getScriptAlias(key); }
+
+    // mime.types functions
+    public String getMimeType(String key) { return mimeTypes.get(key); }
 }

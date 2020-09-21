@@ -54,7 +54,7 @@ public class WebServer {
             server = new ServerSocket(port);
             while(true){
                 client = server.accept();
-                service.execute(new HTTPRequestThread(client.getInputStream(), client.getOutputStream(), httpdConf, mimeTypes, htpassword));
+                service.execute(new HTTPRequestThread(client, httpdConf, mimeTypes, htpassword));
 
             }
         } catch (IOException e){

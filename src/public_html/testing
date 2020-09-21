@@ -1,4 +1,4 @@
 AuthUserFile "/Users/jrob/workspace/server/.htpasswd"
 AuthType Basic
-AuthName "I Challenge You"
+AuthName "Hold up, Jose!"
 Require valid-user

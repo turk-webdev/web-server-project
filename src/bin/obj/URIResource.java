@@ -48,7 +48,7 @@ public class URIResource {
             re.append("/").append(curr);
         }
 
-        re.append(destination);
+        re.append("/").append(destination);
 
         return re.toString();
     }
@@ -87,7 +87,7 @@ public class URIResource {
     public boolean isAliased() { return isAliased; }
     public boolean isScriptAliased() { return isScriptAliased; }
     public boolean checkFileExists() {
-        String contents[] = new File(getPathWithDest()).list();
+        String contents[] = new File(getPathToDest()).list();
 
         for (String currFile : contents) {
             if (currFile.equals(destination)) return true;

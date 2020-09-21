@@ -15,28 +15,32 @@ public class HTTPResponse {
         version = "";
         body = "";
         reasonPhrase = "";
-        statusCode = -1;
+        statusCode = 500;
         this.clientOutput = clientOutput;
     }
 
     public void sendResponse() {
         StringBuilder response = new StringBuilder();
         // First line of request is: VERSION STATUS-CODE REASON-PHRASE
-        response.append(version);
+        if (version.equals("")) {
+            response.append("HTTP/1.1");
+        } else {
+            response.append(version);
+        }
         response.append(" ");
         response.append(statusCode);
         response.append(" ");
         response.append(getReasonPhrase(statusCode));
-        response.append("\n");
+        response.append("\r\n"); // CRLF
 
         // Next, we start putting in each independent header
         for (String key : responseHeaders.keySet()) {
             response.append(key);
-            response.append(":");
+            response.append(": ");
             response.append(responseHeaders.get(key));
             response.append("\n");
         }
-
+        response.append("\r\n"); // CRLF
         // Lasly, we append the body
         response.append(body);
 

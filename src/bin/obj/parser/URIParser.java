@@ -54,12 +54,13 @@ public class URIParser {
         // If the destination is NOT a file, then we want to get the
         // index file of that directory and set that as the destination
         if (!isFile(uriObject.getDestination())) {
-            String dir = uriObject.getPathToDest();
+            String dir = uriObject.getPathWithDest();
             String contents[] = new File(dir).list();
             for (String currFile : contents) {
                 if (currFile.equals(worker.getHttpd("DirectoryIndex"))) {
                     uriObject.addPath(uriObject.getDestination());
                     uriObject.setDestination(currFile);
+                    break;
                 }
             }
         }
