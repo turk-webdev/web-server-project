@@ -49,27 +49,30 @@ public class HTTPRequestParser {
             // With the header parsed, the whole body follows a k-v pair pattern
             // Populate the HTTPRequest object's HashMap representing the body
             boolean readingBody = false;
+            boolean hasBody = false;
             StringBuilder body =  new StringBuilder();
             while ((currLine = inputReader.readLine()) != null) {
                 if (currLine.equals("")) {
-                    readingBody = true;
-                    continue;
+                    if (hasBody) {
+                        readingBody = true;
+                    } else {
+                        break;
+                    }
                 }
 
                 if (readingBody) {
                     body.append(currLine);
                 } else {
-                    st = new StringTokenizer(currLine);
-                    requestObj.put(st.nextToken(),st.nextToken());
+                    String tokens[] = currLine.split(": ");
+                    requestObj.put(tokens[0],tokens[1]);
+                    hasBody = currLine.contains("Content-Length");
                 }
 
             }
 
             if (readingBody) requestObj.setBody(body.toString());
-
-            inputReader.close();
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             return 400;
         }
 
