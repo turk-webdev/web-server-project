@@ -1,14 +1,41 @@
 package auth;
 
+import bin.HTTPRequestThread;
+import bin.obj.HTTPRequest;
+
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 public class AuthDriver {
     /**
      * Work through the flow
      * @return 200 if everything went okay, 40x errors if something went wrong
      */
-    public int run() {
+
+    // TODO: Test this
+    public int run(HTTPRequest requestObj, String htaccessPath, HTTPRequestThread worker) {
+        if (!requestObj.containsKey("Authorization")) {
+            return 401;
+        }
+
+        String clientAuth = requestObj.get("Authorization");
+        Authentication authObj = new Authentication(worker, convertPathToIS(htaccessPath));
+        if (!authObj.authCheck(clientAuth)) {
+            return 403;
+        }
+
         return 200;
+    }
+
+    InputStream convertPathToIS(String path) {
+        try {
+            return new FileInputStream(path);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**

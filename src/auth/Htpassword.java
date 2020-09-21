@@ -11,6 +11,5 @@ public class Htpassword {
     public boolean containsKey(String key) { return htpasswordList.containsKey(key); }
 
     public String get(String key) { return htpasswordList.get(key); }
-
     public String put(String key, String value) { return htpasswordList.put(key, value); }
 }

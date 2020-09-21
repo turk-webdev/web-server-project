@@ -59,7 +59,7 @@ public class HTTPRequestThread implements Runnable {
         // Check if directory is protected by .htaccess
         AuthDriver authDriver = new AuthDriver();
         if (authDriver.isProtectedDir(uriObj.getPathToDest(), getHttpd("AccessFile"))) {
-            int authCode = authDriver.run();
+            int authCode = authDriver.run(requestObj, uriObj.getPathToDest()+"/"+getHttpd("AccessFile"), this);
             if (authCode != 200) {
                 responseObj.setStatusCode(authCode);
                 responseObj.sendResponse();

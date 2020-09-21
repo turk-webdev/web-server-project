@@ -1,5 +1,6 @@
 package auth;
 
+import bin.HTTPRequestThread;
 import bin.obj.parser.HtaccessParser;
 
 import java.io.InputStream;
@@ -9,12 +10,11 @@ import java.security.MessageDigest;
 
 public class Authentication {
 
-    private Htpassword htpasswordObj;
-    private Htaccess htaccessObj;
+    private HTTPRequestThread worker;
 
-    public Authentication(Htpassword htpasswordObj, InputStream file){
-        this.htpasswordObj = htpasswordObj;
-        htaccessObj = new Htaccess();
+    public Authentication(HTTPRequestThread worker, InputStream file){
+        this.worker = worker;
+        Htaccess htaccessObj = new Htaccess();
         HtaccessParser htaccessParser = new HtaccessParser(htaccessObj);
         htaccessParser.parse(file);
     }
@@ -36,7 +36,7 @@ public class Authentication {
 
     private boolean verify(String username, String password){
         String givenPassword = encryptClearPassword(password);
-        String storedPassword = htpasswordObj.get(username);
+        String storedPassword = worker.getHtpassword(username);
         if (givenPassword == storedPassword){
             return true;
         }
