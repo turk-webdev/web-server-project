@@ -69,11 +69,12 @@ public class HTTPRequestThread implements Runnable {
             }
             return;
         }
+        responseObj.setVersion(requestObj.getVersion());
 
         // Next, we want to parse the URI to check if it's aliased
         // and resolve the absolute path to the requested resource
         uriParser.parseURI(requestObj.getIdentifier(), uriObj, this);
-        requestObj.setUriObj(uriObj);
+        requestObj.setUriObj(uriObj); // We need to put the uriObj in the requestObj so it can be accessed by the HTTPVerb obj
 
         // Next, we perform our authorization checks
         // If the target directory is protected, check the headers

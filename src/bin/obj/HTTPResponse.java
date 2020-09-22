@@ -6,14 +6,14 @@ import java.util.HashMap;
 
 public class HTTPResponse {
     private HashMap<String, String> responseHeaders;
-    private String version, reasonPhrase, body;
+    private String version, reasonPhrase;
+    private byte[] body;
     private int statusCode;
     private OutputStream clientOutput;
 
     public HTTPResponse(OutputStream clientOutput) {
         responseHeaders = new HashMap<>();
         version = "";
-        body = "";
         reasonPhrase = "";
         statusCode = 500;
         this.clientOutput = clientOutput;
@@ -62,8 +62,8 @@ public class HTTPResponse {
     // Getters & setters
     public String getVersion() { return version; }
     public void setVersion(String version) { this.version = version; }
-    public String getBody() { return body; }
-    public void setBody(String body) { this.body = body; }
+    public byte[] getBody() { return body; }
+    public void setBody(byte[] body) { this.body = body; }
     public int getStatusCode() { return statusCode; }
     public void setStatusCode(int statusCode) { this.statusCode = statusCode; }
     public String putResponseHeader(String key, String val) {

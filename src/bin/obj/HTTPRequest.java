@@ -44,6 +44,7 @@ public class HTTPRequest {
     public String getDestination() { return uriObj.getDestination(); }
     public boolean isAliased() { return uriObj.isAliased(); }
     public boolean isScriptAliased() { return uriObj.isScriptAliased(); }
+    public String getFileExt() { return uriObj.getFileExt(); }
 
 
 
