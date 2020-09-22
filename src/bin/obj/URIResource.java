@@ -86,6 +86,14 @@ public class URIResource {
     public void isScriptAliased(boolean isScriptAliased) { this.isScriptAliased = isScriptAliased; }
     public boolean isAliased() { return isAliased; }
     public boolean isScriptAliased() { return isScriptAliased; }
+    public String getFileExt() {
+        if (destination.contains("")) {
+            String tokens[] = destination.split("\\.");
+            return tokens[1];
+        }
+
+        return "";
+    }
     public boolean checkFileExists() {
         String contents[] = new File(getPathToDest()).list();
 

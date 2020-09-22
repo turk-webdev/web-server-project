@@ -70,6 +70,6 @@ public class URIParser {
     }
 
     public boolean isFile(String name) {
-        return name.matches("\\w+\\.\\w+|\\W+\\.\\w+");
+        return name.matches("^[\\w,\\s-#]+\\.[A-Za-z]+$");
     }
 }

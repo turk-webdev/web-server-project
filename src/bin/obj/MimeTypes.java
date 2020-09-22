@@ -27,6 +27,9 @@ public class MimeTypes {
     public boolean containsValue(String value) { return typesHashMap.containsValue(value); }
     public boolean isEmpty() { return typesHashMap.isEmpty(); }
     public String put(String key, String value) { return typesHashMap.put(key, value); }
-    public String get(String key) { return typesHashMap.get(key); }
+    public String get(String key) {
+        if (typesHashMap.containsKey(key)) return typesHashMap.get(key);
+        return "text/text";
+    }
     public int size() { return typesHashMap.size(); }
 }

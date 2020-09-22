@@ -22,7 +22,7 @@ public class AuthDriver {
         }
 
         String clientAuth = requestObj.get("Authorization");
-        Authentication authObj = new Authentication(worker, convertPathToIS(htaccessPath));
+        Authentication authObj = new Authentication(convertPathToIS(htaccessPath));
         if (!authObj.authCheck(clientAuth)) {
             return 403;
         }
