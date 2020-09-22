@@ -36,15 +36,12 @@ public class WebServer {
         // Get input streams for our conf files
         InputStream mimeTypesIS = getClass().getClassLoader().getResourceAsStream("conf/mime.types");
         InputStream httpdConfIS = getClass().getClassLoader().getResourceAsStream("conf/httpd.conf");
-        InputStream htpasswordIS = getClass().getClassLoader().getResourceAsStream("conf/.htpassword");
 
         // Parse our config files into their relevant objects
         MimeTypesParser mimeParser = new MimeTypesParser(mimeTypes);
         mimeParser.parse(mimeTypesIS);
         HttpdConfParser httpdConfParser = new HttpdConfParser(httpdConf);
         httpdConfParser.parse(httpdConfIS);
-        HtpasswordParser htpasswordParser = new HtpasswordParser(htpassword);
-        htpasswordParser.parse(htpasswordIS);
 
         port = Integer.parseInt(httpdConf.getHttpd("Listen"));
 
