@@ -14,8 +14,9 @@ public class AuthDriver {
      * @return 200 if everything went okay, 40x errors if something went wrong
      */
 
-    // TODO: Test this
+
     public int run(HTTPRequest requestObj, String htaccessPath, HTTPRequestThread worker) {
+        // TODO: This should prepare the WWW-Authenticate header first
         if (!requestObj.containsKey("Authorization")) {
             return 401;
         }
@@ -29,7 +30,7 @@ public class AuthDriver {
         return 200;
     }
 
-    InputStream convertPathToIS(String path) {
+    static InputStream convertPathToIS(String path) {
         try {
             return new FileInputStream(path);
         } catch (FileNotFoundException e) {
@@ -52,4 +53,5 @@ public class AuthDriver {
 
         return false;
     }
+
 }

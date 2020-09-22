@@ -1,0 +1,4 @@
+AuthUserFile "/Users/turkerdin/Desktop/School/CSC667/web-server-ufkun-adam/src/public_html/.htpasswd"
+AuthType Basic
+AuthName "Access to our home page"
+Require valid-user
