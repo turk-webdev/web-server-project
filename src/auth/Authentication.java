@@ -2,6 +2,7 @@ package auth;
 
 import bin.HTTPRequestThread;
 import bin.obj.parser.HtaccessParser;
+import bin.obj.parser.HtpasswordParser;
 
 import java.io.InputStream;
 import java.util.Base64;
@@ -10,13 +11,14 @@ import java.security.MessageDigest;
 
 public class Authentication {
 
-    private HTTPRequestThread worker;
+    private Htaccess htaccessObj = new Htaccess();
+    private Htpassword htpasswordObj = new Htpassword();
 
-    public Authentication(HTTPRequestThread worker, InputStream file){
-        this.worker = worker;
-        Htaccess htaccessObj = new Htaccess();
+    public Authentication(InputStream htaccessIS){
         HtaccessParser htaccessParser = new HtaccessParser(htaccessObj);
-        htaccessParser.parse(file);
+        HtpasswordParser htpasswordParser = new HtpasswordParser(htpasswordObj);
+        htaccessParser.parse(htaccessIS);
+        htpasswordParser.parse(AuthDriver.convertPathToIS(htaccessObj.get("AuthUserFile")));
     }
 
     public boolean authCheck(String auth){
@@ -36,7 +38,7 @@ public class Authentication {
 
     private boolean verify(String username, String password){
         String givenPassword = encryptClearPassword(password);
-        String storedPassword = worker.getHtpassword(username);
+        String storedPassword = htpasswordObj.get(username);
         if (givenPassword == storedPassword){
             return true;
         }

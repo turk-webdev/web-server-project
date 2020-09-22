@@ -16,13 +16,6 @@ public class HTTPRequest {
         body = "";
     }
 
-    public void printRequest() {
-        System.out.printf("%s %s %s\n",verb,identifier,version);
-        for (String key: headers.keySet()) {
-            System.out.printf("%s : %s\n",key, headers.get(key));
-        }
-    }
-
     // Getters
     public String getVerb() { return verb; }
     public String getIdentifier() { return identifier; }
@@ -49,6 +42,8 @@ public class HTTPRequest {
     public String getPathToDest() { return uriObj.getPathToDest(); }
     public String getPathWithDest() { return uriObj.getPathWithDest(); }
     public String getDestination() { return uriObj.getDestination(); }
+    public boolean isAliased() { return uriObj.isAliased(); }
+    public boolean isScriptAliased() { return uriObj.isScriptAliased(); }
 
 
 

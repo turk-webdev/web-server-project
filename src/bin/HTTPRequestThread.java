@@ -1,8 +1,8 @@
 /**********************************************************************
  * File: HTTPRequestThread.java
- * Description: This threaded object is run each time ANTIPARAZI receives a
- * new request. It delegates the parsing of the request and the response and
- * is simply responsible for facilitating communication to and from the client.
+ * Description: This thread is responsible for following the basic flow
+ * of the webserver by delegating jobs for each step to the necessary
+ * objects.
  *********************************************************************/
 
 package bin;
@@ -22,17 +22,16 @@ public class HTTPRequestThread implements Runnable {
     private Socket client;
     private HttpdConf httpdConf;
     private MimeTypes mimeTypes;
-    private Htpassword htpassword;
 
     public HTTPRequestThread(Socket client, HttpdConf httpdConf, MimeTypes mimeTypes, Htpassword htpassword) {
         this.client = client;
         this.httpdConf = httpdConf;
         this.mimeTypes = mimeTypes;
-        this.htpassword = htpassword;
     }
 
     @Override
     public void run() {
+        // Init our I/O streams for the client
         OutputStream clientOutput;
         InputStream clientInput;
         try {
@@ -43,18 +42,21 @@ public class HTTPRequestThread implements Runnable {
             e.printStackTrace();
             return;
         }
+
         // Init local objects
         HTTPRequest requestObj = new HTTPRequest();
         HTTPRequestParser requestParser = new HTTPRequestParser();
         HTTPResponse responseObj = new HTTPResponse(clientOutput);
+        URIResource uriObj = new URIResource();
+        URIParser uriParser = new URIParser();
 
         // Mandatory response fields - Server & Date
-        responseObj.putResponseHeader("Server","ANTIPARAZI/1.0");
+        responseObj.putResponseHeader("Server","ErdinBea/1.0");
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         responseObj.putResponseHeader("Date",formatter.format(new Date()));
 
+        // First we want to make sure the request is valid
         int parseCode = requestParser.parseRequest(requestObj, new BufferedReader(new InputStreamReader(clientInput)));
-
         if (parseCode == 400) {
             System.out.printf("[%s] Line 50: 400 code\n",Thread.currentThread().getName());
             responseObj.setStatusCode(parseCode);
@@ -68,15 +70,22 @@ public class HTTPRequestThread implements Runnable {
             return;
         }
 
-        URIResource uriObj = new URIResource();
-        URIParser uriParser = new URIParser();
+        // Next, we want to parse the URI to check if it's aliased
+        // and resolve the absolute path to the requested resource
         uriParser.parseURI(requestObj.getIdentifier(), uriObj, this);
         requestObj.setUriObj(uriObj);
 
-        // Check if directory is protected by testing
+        // Next, we perform our authorization checks
+        // If the target directory is protected, check the headers
         AuthDriver authDriver = new AuthDriver();
         if (authDriver.isProtectedDir(uriObj.getPathToDest(), getHttpd("AccessFile"))) {
             int authCode = authDriver.run(requestObj, uriObj.getPathToDest()+"/"+getHttpd("AccessFile"), this);
+            switch (authCode) {
+                case 401:
+//                    authDriver
+                case 403:
+                    break;
+            }
             if (authCode != 200) {
                 responseObj.setStatusCode(authCode);
                 responseObj.sendResponse();
@@ -120,11 +129,6 @@ public class HTTPRequestThread implements Runnable {
             e.printStackTrace();
         }
     }
-
-    // htpassword functions
-    public String getHtpassword(String key) { return htpassword.get(key); }
-    public String putHtpassword(String key, String value) { return htpassword.put(key, value); }
-    public boolean htpasswordContainsKey(String key) { return htpassword.containsKey(key); }
 
     // httpd.conf functions
     public boolean httpdContainsKey(String key) { return httpdConf.httpdContainsKey(key); }

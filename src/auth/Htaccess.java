@@ -10,7 +10,7 @@ public class Htaccess {
 
     public boolean containsKey(String key){ return htaccessList.containsKey(key); }
 
-    public String get(String key, String value){ return htaccessList.get(key);}
+    public String get(String key){ return htaccessList.get(key);}
 
     public String put(String key, String value){ return htaccessList.put(key, value);}
 }

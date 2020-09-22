@@ -10,9 +10,9 @@ public class HtpasswordParser {
 
     private Htpassword htpasswordObj;
 
-    public HtpasswordParser(Htpassword htpasswordObj){this.htpasswordObj = htpasswordObj;}
+    public HtpasswordParser(Htpassword htpasswordObj) { this.htpasswordObj = htpasswordObj; }
 
-    public void parse(InputStream file){
+    public void parse(InputStream file) {
         String currentLine;
         String[] tokens;
         try{
