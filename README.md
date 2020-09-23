@@ -11,5 +11,6 @@ Project Structure
       |-verb (contains HTTP verb implementations)
       |-parser (contains parsers for various implementations)
   |-conf (conf files to be read)
+  |-logs (contains logging code & logs themselves)
   |-public_html (front-end test stuff)
 ```

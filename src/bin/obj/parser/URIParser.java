@@ -15,7 +15,7 @@ import java.nio.file.Paths;
 import java.util.StringTokenizer;
 
 public class URIParser {
-    public void parseURI(String uri, URIResource uriObject, HTTPRequestThread worker) {
+    public void parseURI(String uri, URIResource uriObject, HTTPRequestThread worker, boolean isPut) {
         // Build our path data structure
         StringTokenizer dirs = new StringTokenizer(uri, File.separator);
 
@@ -81,7 +81,7 @@ public class URIParser {
 
         // If the destination is NOT a file, then we want to get the
         // index file of that directory and set that as the destination
-        if (!(new File(uri).isFile())) {
+        if (!(new File(uri).isFile()) && !isPut) {
             String dir = uriObject.getPathWithDest();
             String contents[] = new File(dir).list();
             for (String currFile : contents) {

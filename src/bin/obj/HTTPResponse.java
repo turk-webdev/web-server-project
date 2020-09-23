@@ -40,6 +40,7 @@ public class HTTPResponse {
             response.append(responseHeaders.get(key));
             response.append("\n");
         }
+        response.setLength(response.length()-1); // remove the trailing newline
         response.append("\r\n"); // CRLF
 
         // Lasly, we append the body

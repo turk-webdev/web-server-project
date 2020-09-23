@@ -77,7 +77,7 @@ public class HTTPRequestThread extends Thread {
 
         // Next, we want to parse the URI to check if it's aliased
         // and resolve the absolute path to the requested resource
-        uriParser.parseURI(requestObj.getIdentifier(), uriObj, this);
+        uriParser.parseURI(requestObj.getIdentifier(), uriObj, this, requestObj.getVerb().toUpperCase().equals("PUT"));
         requestObj.setUriObj(uriObj); // We need to put the uriObj in the requestObj so it can be accessed by the HTTPVerb obj
 
         // Next, we perform our authorization checks
@@ -175,4 +175,5 @@ public class HTTPRequestThread extends Thread {
         if (mimeTypes.containsKey(key)) return mimeTypes.get(key);
         return "text/text";
     }
+
 }
