@@ -1,6 +1,7 @@
 package bin.obj.verb;
 
 import bin.HTTPRequestThread;
+import bin.obj.CacheHelper;
 import bin.obj.HTTPRequest;
 import bin.obj.HTTPResponse;
 import bin.obj.HTTPVerb;
@@ -16,36 +17,23 @@ import java.util.Date;
 public class Head extends HTTPVerb {
     @Override
     public void execute(HTTPResponse responseObj, HTTPRequest requestObj, HTTPRequestThread worker) {
+        // If we have a caching header, check to see if cached version is current
         if (requestObj.containsKey("If-Modified-Since")) {
-            try {
-                FileTime lastModifiedTime = Files.getLastModifiedTime(Paths.get(requestObj.getPathWithDest()));
-                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-                Date lastModifiedDate = new Date(lastModifiedTime.toMillis());
-                Date cacheDate = formatter.parse(requestObj.get("If-Modified-Since"));
-
-                if (lastModifiedDate.compareTo(cacheDate) < 0) {
-                    responseObj.setStatusCode(304);
-                    responseObj.sendResponse();
-                    return;
-                }
-            } catch (IOException e) {
-                System.out.println("ERR::Issue with getting GET file's last modified time");
-                e.printStackTrace();
-            } catch (ParseException e) {
-                System.out.println("ERR::Issue with parsing If-Modified-Since date");
-                e.printStackTrace();
+            if (CacheHelper.cacheIsOk(requestObj.getPathWithDest(), requestObj.get("If-Modified-Since")) == 0) {
+                responseObj.setStatusCode(304);
             }
         }
 
         // If it isn't current, send the file contents
         try {
-            byte[] fileContents = Files.readAllBytes(Paths.get(requestObj.getPathWithDest()));
-
-            responseObj.putResponseHeader("Content-Type", worker.getMimeType(requestObj.getFileExt()));
-            responseObj.putResponseHeader("Content-Length", Integer.toString(fileContents.length));
             responseObj.setStatusCode(200);
+            // Lastly, we want to put the Last-Modified header to allow for caching
+            responseObj.putResponseHeader("Last-Modified", CacheHelper.getLastModifiedDate(requestObj.getPathWithDest()));
+        } catch (IOException e) {
+            // If putting the Last-Modified header threw an error, just use the current date
+            responseObj.putResponseHeader("Last-Modified", CacheHelper.getCurrentDate());
         } catch (Exception e) {
-            String errMsgHtml = "<html>\n<body>\n\t<h1>500 - Internal Server Error</h1>\n\t<p>There was an error with reading the requested resource</p>\n</body>\n</html>";
+            String errMsgHtml = "<html>\n<body>\n\t<h1>500 - Internal Server Error</h1>\n\t<p>There was some internal error</p>\n</body>\n</html>";
             byte[] data = errMsgHtml.getBytes();
 
             responseObj.setBody(data);

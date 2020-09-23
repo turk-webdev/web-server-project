@@ -41,8 +41,8 @@ public class HTTPResponse {
             response.append("\n");
         }
         response.append("\r\n"); // CRLF
-        // Lasly, we append the body
 
+        // Lasly, we append the body
         // Convert our String data into a byte stream
         byte[] headers = response.toString().getBytes();
 

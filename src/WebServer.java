@@ -44,11 +44,6 @@ public class WebServer {
             server = new ServerSocket(port);
             while(true){
                 client = server.accept();
-//                client.getInputStream().close();
-//                client.getOutputStream().flush();
-//                client.getOutputStream().close();
-//                client.close();
-//                break;
                 // Create a new thread each time we accept a request
                 new Thread(new HTTPRequestThread(client, httpdConf, mimeTypes)).start();
 
