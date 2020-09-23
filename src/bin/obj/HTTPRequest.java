@@ -46,8 +46,8 @@ public class HTTPRequest {
     public boolean isAliased() { return uriObj.isAliased(); }
     public boolean isScriptAliased() { return uriObj.isScriptAliased(); }
     public String getFileExt() { return uriObj.getFileExt(); }
-    public Set<String> argsKeySet() { return uriObj.argsKeySet(); }
-    public String getArgs(String key) { return uriObj.getArgs(key); }
+    public boolean hasQueryString() { return uriObj.hasQueryString(); }
+    public String getQueryString() { return uriObj.getQueryString(); }
 
     // CGI Handler helper function
     public Set<String> envKeySet() { return headers.keySet(); }
