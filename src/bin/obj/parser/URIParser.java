@@ -10,6 +10,8 @@ import bin.HTTPRequestThread;
 import bin.obj.URIResource;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.StringTokenizer;
 
 public class URIParser {
@@ -53,7 +55,7 @@ public class URIParser {
 
         // If the destination is NOT a file, then we want to get the
         // index file of that directory and set that as the destination
-        if (!isFile(uriObject.getDestination())) {
+        if (!(new File(uri).isFile())) {
             String dir = uriObject.getPathWithDest();
             String contents[] = new File(dir).list();
             for (String currFile : contents) {
@@ -67,9 +69,5 @@ public class URIParser {
 
         // At this point, the URIResource object has the absolute path mapped to it
 
-    }
-
-    public boolean isFile(String name) {
-        return name.matches("^[\\w,\\s-#]+\\.[A-Za-z]+$");
     }
 }

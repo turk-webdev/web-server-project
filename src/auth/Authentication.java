@@ -13,25 +13,31 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Base64;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 
 public class Authentication {
 
-    private Htaccess htaccessObj = new Htaccess();
-    private Htpassword htpasswordObj = new Htpassword();
-    private HTTPResponse responseObj;
-    private HTTPRequest requestObj;
+    private Htaccess htaccessObj;
+    private Htpassword htpasswordObj;
+    private String username;
 
-    public Authentication(String htaccessPath) {
-        HtaccessParser htaccessParser = new HtaccessParser(htaccessObj);
-        HtpasswordParser htpasswordParser = new HtpasswordParser(htpasswordObj);
-        htaccessParser.parse(convertPathToIS(htaccessPath));
-        htpasswordParser.parse(convertPathToIS(htaccessObj.get("AuthUserFile")));
+    public Authentication() {
+        htaccessObj = new Htaccess();
+        htpasswordObj = new Htpassword();
     }
 
-    public int run(HTTPResponse responseObj, HTTPRequest requestObj) {
+    public int run(String htaccessPath, HTTPResponse responseObj, HTTPRequest requestObj) {
+        HtaccessParser htaccessParser = new HtaccessParser(htaccessObj);
+        HtpasswordParser htpasswordParser = new HtpasswordParser(htpasswordObj);
+        if (Files.exists(Paths.get(htaccessPath))) {
+            htaccessParser.parse(convertPathToIS(htaccessPath));
+            htpasswordParser.parse(convertPathToIS(htaccessObj.get("AuthUserFile")));
+        }
+
         // If the request did not have Authorization header, 401 and challenge client
         if (!requestObj.containsKey("Authorization")) {
             responseObj.setStatusCode(401);
@@ -74,6 +80,7 @@ public class Authentication {
     }
 
     private boolean verify(String username, String password){
+        this.username = username;
         String givenPassword = encryptClearPassword(password);
         String storedPassword = htpasswordObj.get(username);
         if (givenPassword.equals(storedPassword)){
@@ -113,4 +120,6 @@ public class Authentication {
             return null;
         }
     }
+
+    public String getUsername() { return username; }
 }

@@ -34,10 +34,10 @@ public class Logger {
         String logFile = httpdConf.getHttpd("LogFile");
         FileWriter fileWriter = new FileWriter(logFile, true);
         PrintWriter printWriter = new PrintWriter(fileWriter);
-        String logMessage = String.format("%s %s %s [%s] %s %s %s %s %s\n",
-                iNetAddress, "-", username, this.getDateTime(ZonedDateTime.now()),
+        String logMessage = String.format("%s - %s [%s] %s %s %s %s %s\n",
+                iNetAddress, username, this.getDateTime(ZonedDateTime.now()),
                 method, identifier, version, statusCode, byteLength);
-        printWriter.printf("%s", logMessage);
+        printWriter.printf("%s\n", logMessage);
         printWriter.close();
     }
 
