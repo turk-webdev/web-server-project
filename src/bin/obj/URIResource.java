@@ -104,7 +104,20 @@ public class URIResource {
         return false;
     }
 
-    public Set<String> argsKeySet() { return args.keySet(); }
-    public String getArgs(String key) { return args.get(key); }
+    public String getQueryString() {
+        StringBuilder re = new StringBuilder();
+        re.append("?");
+
+        for (String key : args.keySet()) {
+            re.append(args.get(key)).append("&");
+        }
+
+        // Remove the extra "&" at the end
+        if (re.length() > 0) {
+            re.setLength(re.length()-1);
+        }
+
+        return re.toString();
+    }
 
 }
