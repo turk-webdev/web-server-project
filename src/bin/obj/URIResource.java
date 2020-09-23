@@ -104,4 +104,7 @@ public class URIResource {
         return false;
     }
 
+    public Set<String> argsKeySet() { return args.keySet(); }
+    public String getArgs(String key) { return args.get(key); }
+
 }
