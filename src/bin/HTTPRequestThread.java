@@ -7,8 +7,7 @@
 
 package bin;
 
-import auth.AuthDriver;
-import auth.Htpassword;
+import auth.Authentication;
 import bin.obj.*;
 import bin.obj.parser.HTTPRequestParser;
 import bin.obj.parser.URIParser;
@@ -23,7 +22,7 @@ public class HTTPRequestThread implements Runnable {
     private HttpdConf httpdConf;
     private MimeTypes mimeTypes;
 
-    public HTTPRequestThread(Socket client, HttpdConf httpdConf, MimeTypes mimeTypes, Htpassword htpassword) {
+    public HTTPRequestThread(Socket client, HttpdConf httpdConf, MimeTypes mimeTypes) {
         this.client = client;
         this.httpdConf = httpdConf;
         this.mimeTypes = mimeTypes;
@@ -58,10 +57,12 @@ public class HTTPRequestThread implements Runnable {
         // First we want to make sure the request is valid
         int parseCode = requestParser.parseRequest(requestObj, new BufferedReader(new InputStreamReader(clientInput)));
         if (parseCode == 400) {
-            System.out.printf("[%s] Line 50: 400 code\n",Thread.currentThread().getName());
             responseObj.setStatusCode(parseCode);
             responseObj.sendResponse();
             try {
+                clientInput.close();
+                clientOutput.flush();
+                clientOutput.close();
                 client.close();
             } catch (IOException e) {
                 System.out.println("Error closing connection");
@@ -78,17 +79,12 @@ public class HTTPRequestThread implements Runnable {
 
         // Next, we perform our authorization checks
         // If the target directory is protected, check the headers
-        AuthDriver authDriver = new AuthDriver();
-        if (authDriver.isProtectedDir(uriObj.getPathToDest(), getHttpd("AccessFile"))) {
-            int authCode = authDriver.run(requestObj, uriObj.getPathToDest()+"/"+getHttpd("AccessFile"), this);
-            switch (authCode) {
-                case 401:
-//                    authDriver
-                case 403:
-                    break;
-            }
+        Authentication auth = new Authentication(uriObj.getPathToDest() + "/" + getHttpd("AccessFile"));
+        if (auth.isProtectedDir(uriObj.getPathToDest(), getHttpd("AccessFile"))) {
+            int authCode = auth.run(responseObj, requestObj);
+
+            // If things were not okay, then we built the response within auth, just send the response
             if (authCode != 200) {
-                responseObj.setStatusCode(authCode);
                 responseObj.sendResponse();
                 try {
                     client.close();
@@ -101,7 +97,7 @@ public class HTTPRequestThread implements Runnable {
         }
 
         // Check if file exists
-        if (!uriObj.checkFileExists()) {
+        if (!uriObj.checkFileExists() && !requestObj.getVerb().equals("PUT")) {
             responseObj.setStatusCode(404);
             responseObj.sendResponse();
             try {
@@ -129,6 +125,15 @@ public class HTTPRequestThread implements Runnable {
             System.out.println("Something went horribly wrong");
             e.printStackTrace();
         }
+
+        // Nulling the resources so GC can do its job
+        uriObj = null;
+        requestObj = null;
+        responseObj = null;
+        auth = null;
+        uriParser = null;
+        requestParser = null;
+        verbObj = null;
     }
 
     // httpd.conf functions

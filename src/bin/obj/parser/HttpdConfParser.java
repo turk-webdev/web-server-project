@@ -9,7 +9,7 @@ import java.util.StringTokenizer;
 
 public class HttpdConfParser {
     private enum Defaults {
-        AccessFile("access"),
+        AccessFile(".htaccess"),
         DirIndex("index.html"),
         Listen("8080");
 
