@@ -45,7 +45,7 @@ public class HtaccessParser {
             case "AuthType":
                 return "Basic";
             case "AuthName":
-                return "Page requires access";
+                return "Page requires .htaccess";
             case "Require":
                 return "valid-user";
             default:

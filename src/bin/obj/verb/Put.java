@@ -13,63 +13,38 @@ import bin.obj.HTTPResponse;
 import bin.obj.HTTPVerb;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.stream.Stream;
 
 public class Put extends HTTPVerb {
     @Override
     public void execute(HTTPResponse responseObj, HTTPRequest requestObj, HTTPRequestThread worker) {
-        String requestBody[] = requestObj.getBody().split(System.getProperty("line.separator"));
-        File dest = new File(requestObj.getPathWithDest());
-        int re;
+        try {
+            FileWriter writer = new FileWriter(requestObj.getPathWithDest(),false);
+            byte data[] = requestObj.getBody().getBytes();
 
-        if (dest.exists()) {
-            responseObj.setStatusCode(204);
-            re = overwrite(dest, requestBody);
-        } else {
-            responseObj.setStatusCode(201);
-            re = write(dest, requestBody);
-        }
+            if (Files.exists(Paths.get(requestObj.getPathWithDest()))) {
+                responseObj.setStatusCode(204);
+            } else {
+                responseObj.setStatusCode(201);
+            }
 
-        if (re < 0) {
-            // TODO: Send 500 response
-            String html = "<html><body><h1>There was an error with creating the resource</h1></body></html>";
-            responseObj.setBody(html);
-            responseObj.putResponseHeader("Content-Type", worker.getMimeType("html"));
-            responseObj.putResponseHeader("Content-Length", Integer.toString(html.length()));
+            responseObj.putResponseHeader("Content-Type", worker.getMimeType(requestObj.getFileExt()));
+            responseObj.putResponseHeader("Content-Length", Integer.toString(data.length));
+
+            writer.write(requestObj.getBody());
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
             responseObj.setStatusCode(500);
+            String html = "<html>\n<body>\n<h1>500 Internal Server Error</h1>\n<p>Something went wrong while processing the request</p>\n</body>\n</html>";
+            byte data[] = html.getBytes();
+            responseObj.putResponseHeader("Content-Type", "text/html");
+            responseObj.putResponseHeader("Content-Length", Integer.toString(data.length));
         }
 
-        responseObj.putResponseHeader("Content-Location", requestObj.getIdentifier());
         responseObj.sendResponse();
-    }
-
-    private int write(File file, String[] contentLines) {
-        try {
-            file.createNewFile();
-            FileWriter writer = new FileWriter(file, false);
-            for (String line : contentLines) {
-                writer.write(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return -1;
-        }
-
-        return 0;
-    }
-
-    private int overwrite(File file, String[] contentLines) {
-        try {
-            FileWriter writer = new FileWriter(file, false);
-            for (String line : contentLines) {
-                writer.write(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return -1;
-        }
-
-        return 0;
     }
 
 }

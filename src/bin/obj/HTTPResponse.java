@@ -42,10 +42,20 @@ public class HTTPResponse {
         }
         response.append("\r\n"); // CRLF
         // Lasly, we append the body
-        response.append(body);
 
         // Convert our String data into a byte stream
-        byte[] data = response.toString().getBytes();
+        byte[] headers = response.toString().getBytes();
+
+        // Combine the two byte streams
+        byte[] data;
+        try {
+            data = new byte[body.length + headers.length];
+            System.arraycopy(headers, 0, data, 0, headers.length);
+            System.arraycopy(body, 0, data, headers.length, body.length);
+        } catch (NullPointerException e) {
+            data = new byte[headers.length];
+            System.arraycopy(headers, 0, data, 0, headers.length);
+        }
 
         try {
             clientOutput.write(data);
