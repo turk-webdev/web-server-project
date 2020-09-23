@@ -1,4 +1,4 @@
-AuthUserFile "/Users/jrob/workspace/server/.htpasswd"
+AuthUserFile "/Users/turkerdin/Desktop/School/CSC667/web-server-ufkun-adam/src/conf/.htpassword"
 AuthType Basic
-AuthName "I Challenge You"
+AuthName "Access to our page"
 Require valid-user
