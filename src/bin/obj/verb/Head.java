@@ -21,6 +21,8 @@ public class Head extends HTTPVerb {
         if (requestObj.containsKey("If-Modified-Since")) {
             if (CacheHelper.cacheIsOk(requestObj.getPathWithDest(), requestObj.get("If-Modified-Since")) == 0) {
                 responseObj.setStatusCode(304);
+                responseObj.sendResponse();
+                return;
             }
         }
 

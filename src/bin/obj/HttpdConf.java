@@ -1,6 +1,7 @@
 package bin.obj;
 
 import java.util.HashMap;
+import java.util.Set;
 
 public class HttpdConf{
 
@@ -14,30 +15,11 @@ public class HttpdConf{
         aliasList = new HashMap<>();
     }
 
-    public void printDebug() {
-        System.out.println("~~~~~~~~~~~~~");
-        System.out.println("HttpdList");
-        System.out.println("~~~~~~~~~~~~~");
-        for (String key : httpdList.keySet()) {
-            System.out.printf("%s\t%s\n",key, httpdList.get(key));
-        }
-        System.out.println("~~~~~~~~~~~~~");
-        System.out.println("ScriptAliasList");
-        System.out.println("~~~~~~~~~~~~~");
-        for (String key : scriptAliasList.keySet()) {
-            System.out.printf("%s\t%s\n",key, scriptAliasList.get(key));
-        }
-        System.out.println("~~~~~~~~~~~~~");
-        System.out.println("AliasList");
-        System.out.println("~~~~~~~~~~~~~");
-        for (String key : aliasList.keySet()) {
-            System.out.printf("%s\t%s\n",key, aliasList.get(key));
-        }
-    }
-
     public boolean httpdContainsKey(String key) { return httpdList.containsKey(key); }
     public boolean aliasContainsKey(String key) { return aliasList.containsKey(key); }
     public boolean scriptAliasContainsKey(String key) { return scriptAliasList.containsKey(key); }
+    public Set<String> getAliasKeySet() { return aliasList.keySet(); }
+    public Set<String> getScriptAliasKeySet() { return scriptAliasList.keySet(); }
 
     //standard getter methods
     public String getHttpd(String key){ return httpdList.get(key); }

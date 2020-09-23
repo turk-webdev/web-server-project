@@ -73,6 +73,13 @@ public class HTTPResponse {
     public String getVersion() { return version; }
     public void setVersion(String version) { this.version = version; }
     public byte[] getBody() { return body; }
+    public int getBodyLength() {
+        try {
+            return body.length;
+        } catch (NullPointerException e) {
+            return 0;
+        }
+    }
     public void setBody(byte[] body) { this.body = body; }
     public int getStatusCode() { return statusCode; }
     public void setStatusCode(int statusCode) { this.statusCode = statusCode; }

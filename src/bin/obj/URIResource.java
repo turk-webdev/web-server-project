@@ -30,13 +30,16 @@ public class URIResource {
     public String getDestination() { return destination; }
     public void putArgs(String key, String val) { args.put(key,val); }
     public void addPath(String token) { path.add(token); }
+    public void addPath(int i, String token) { path.add(i, token); }
 
     public String getPathToDest() {
         StringBuilder re = new StringBuilder();
 
         for (String curr : path) {
-            re.append("/").append(curr);
+            re.append(File.separator).append(curr);
         }
+
+        re.append(File.separator);
 
         return re.toString();
     }
@@ -45,10 +48,10 @@ public class URIResource {
         StringBuilder re = new StringBuilder();
 
         for (String curr : path) {
-            re.append("/").append(curr);
+            re.append(File.separator).append(curr);
         }
 
-        re.append("/").append(destination);
+        re.append(File.separator).append(destination);
 
         return re.toString();
     }
@@ -57,14 +60,13 @@ public class URIResource {
         StringBuilder uri = new StringBuilder();
 
         // Add each level in the path, then add the destination
-        for (String curr : path) uri.append("/").append(curr);
-        uri.append("/").append(destination);
+        for (String curr : path) uri.append(File.separator).append(curr);
+        uri.append(File.separator).append(destination);
 
         // If we have any params/args, add those too
         if (args.size() > 0) {
             uri.append("?");
 
-            // TODO: Look over this again
             // There is a more elegant solution using Iterator, but I am too lazy/burnt right now - come back to it
             int iterations = 0;
             for (String key : args.keySet()) {
@@ -82,12 +84,13 @@ public class URIResource {
     }
 
     // Public methods
+    public void clearPath() { path.clear(); }
     public void isAliased(boolean isAliased) { this.isAliased = isAliased; }
     public void isScriptAliased(boolean isScriptAliased) { this.isScriptAliased = isScriptAliased; }
     public boolean isAliased() { return isAliased; }
     public boolean isScriptAliased() { return isScriptAliased; }
     public String getFileExt() {
-        if (destination.contains("")) {
+        if (destination.contains(".")) {
             String tokens[] = destination.split("\\.");
             return tokens[1];
         }

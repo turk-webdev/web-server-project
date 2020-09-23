@@ -34,6 +34,7 @@ public class CGIHandler {
             StringBuilder stringBuilder = new StringBuilder();
             String line;
             while ((line = bufferedReader.readLine()) != null){
+                if (line.equals("") || line.equals("\r\n")) continue;
                 stringBuilder.append(line);
                 stringBuilder.append(System.getProperty("line.separator"));
             }

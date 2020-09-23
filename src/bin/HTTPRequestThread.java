@@ -16,6 +16,7 @@ import logs.Logger;
 import java.io.*;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
 public class HTTPRequestThread extends Thread {
@@ -83,7 +84,7 @@ public class HTTPRequestThread extends Thread {
         // If the target directory is protected, check the headers
         Authentication auth = new Authentication();
         if (auth.isProtectedDir(uriObj.getPathToDest(), getHttpd("AccessFile"))) {
-            int authCode = auth.run(uriObj.getPathToDest() + "/" + getHttpd("AccessFile"), responseObj, requestObj);
+            int authCode = auth.run(uriObj.getPathToDest() + File.pathSeparator + getHttpd("AccessFile"), responseObj, requestObj);
 
             // If things were not okay, then we built the response within auth, just send the response
             if (authCode != 200) {
@@ -118,7 +119,7 @@ public class HTTPRequestThread extends Thread {
         if (uriObj.isScriptAliased()) {
             CGIHandler cgiHandler = new CGIHandler();
             byte[] body = cgiHandler.handle(uriObj, requestObj);
-            if (!(body.equals("error".getBytes()))){
+            if (!(Arrays.equals(body, "error".getBytes()))){
                 responseObj.setStatusCode(200);
                 responseObj.setBody(body);
             } else {
@@ -152,6 +153,26 @@ public class HTTPRequestThread extends Thread {
     public String getAlias(String key){ return httpdConf.getAlias(key); }
     public String getScriptAlias(String key){ return httpdConf.getScriptAlias(key); }
 
+    /**
+     * Checks to see if the given uri is any kind of aliased
+     * @param uri
+     * @return -1 if Aliased, 1 if ScriptAliased, 0 if not
+     */
+    public int checkAlias(String uri) {
+        for (String key : httpdConf.getAliasKeySet()) {
+            if (key.equals(uri)) return -1;
+        }
+
+        for (String key : httpdConf.getScriptAliasKeySet()) {
+            if (key.equals(uri)) return 1;
+        }
+
+        return 0;
+    }
+
     // mime.types functions
-    public String getMimeType(String key) { return mimeTypes.get(key); }
+    public String getMimeType(String key) {
+        if (mimeTypes.containsKey(key)) return mimeTypes.get(key);
+        return "text/text";
+    }
 }

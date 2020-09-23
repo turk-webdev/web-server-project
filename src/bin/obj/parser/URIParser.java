@@ -16,23 +16,49 @@ import java.util.StringTokenizer;
 
 public class URIParser {
     public void parseURI(String uri, URIResource uriObject, HTTPRequestThread worker) {
-        // First, we want to check if the given URI is aliased
-        if (worker.aliasContainsKey(uri)) {
-            uri = worker.getAlias(uri);
-            uriObject.isAliased(true);
-        } else if (worker.scriptAliasContainsKey(uri)) {
-            uri = worker.getScriptAlias(uri);
-            uriObject.isScriptAliased(true);
-        } else {
-            uri = worker.getHttpd("DocumentRoot") + uri.substring(1);
+        // Build our path data structure
+        StringTokenizer dirs = new StringTokenizer(uri, File.separator);
+
+        while (dirs.hasMoreTokens()) {
+            String currDirsToken = dirs.nextToken();
+
+            if (currDirsToken.contains("?")) {
+                // If we encounter a "?", then we have params - and thus are at the destination
+                StringTokenizer params = new StringTokenizer(currDirsToken,"?&");
+                String currParamsToken = params.nextToken();
+                uriObject.setDestination(currParamsToken);
+                while (params.hasMoreTokens()) {
+                    String args[] = params.nextToken().split("=");
+                    uriObject.putArgs(args[0],args[1]);
+                }
+            } else if (!dirs.hasMoreTokens()) {
+                // If we've come to the end of the list, we've got our destination
+                uriObject.setDestination(currDirsToken);
+            } else {
+                uriObject.addPath(currDirsToken);
+            }
         }
 
-        // Now that we've got the directory path, we want to parse that into
-        // the URIResource for easier reference
-        StringTokenizer dirs = new StringTokenizer(uri, "/");
+        switch (worker.checkAlias(uriObject.getPathToDest())) {
+            case -1:
+                // Aliased
+                uriObject.isAliased(true);
+                uri = worker.getAlias(uriObject.getPathToDest()) + uriObject.getDestination();
+                break;
+            case 1:
+                // Script Aliased
+                uriObject.isScriptAliased(true);
+                uri = worker.getScriptAlias(uriObject.getPathToDest()) + uriObject.getDestination();
+                break;
+            case 0:
+                uri = worker.getHttpd("DocumentRoot") + uri.substring(1);
+                break;
+        }
 
-        // First we split the string based on "dirs" with the "/" delim
-        // to get each "level"
+        // Now we want to rebuild the path object in the uriObj with the modified uri
+        uriObject.clearPath();
+        dirs = new StringTokenizer(uri, File.separator);
+
         while (dirs.hasMoreTokens()) {
             String currDirsToken = dirs.nextToken();
 

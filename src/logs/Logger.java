@@ -39,7 +39,7 @@ public class Logger {
             PrintWriter printWriter = new PrintWriter(fileWriter);
             String logMessage = String.format("%s %s %s [%s] %s %s %s %s %s\n",
                     client.getInetAddress(), "-", username, this.getDateTime(ZonedDateTime.now()),
-                    req.getVerb(), req.getIdentifier(), req.getVersion(), resp.getStatusCode(), resp.getBody().length);
+                    req.getVerb(), req.getIdentifier(), req.getVersion(), resp.getStatusCode(), resp.getBodyLength());
             printWriter.printf("%s", logMessage);
             System.out.println(logMessage);
             printWriter.close();
