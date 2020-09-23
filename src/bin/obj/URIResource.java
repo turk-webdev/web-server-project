@@ -109,7 +109,7 @@ public class URIResource {
         re.append("?");
 
         for (String key : args.keySet()) {
-            re.append(args.get(key)).append("&");
+            re.append(key).append("=").append(args.get(key)).append("&");
         }
 
         // Remove the extra "&" at the end
