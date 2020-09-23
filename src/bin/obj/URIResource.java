@@ -120,4 +120,6 @@ public class URIResource {
         return re.toString();
     }
 
+    public boolean hasQueryString() { return args.size() > 0; }
+
 }
