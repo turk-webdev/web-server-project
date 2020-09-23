@@ -1,10 +1,13 @@
 package logs;
 
+import bin.obj.HTTPRequest;
+import bin.obj.HTTPResponse;
 import bin.obj.HttpdConf;
 
 import java.io.IOException;
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.net.Socket;
 import java.time.ZonedDateTime;
 import java.time.format.TextStyle;
 import java.util.Locale;
@@ -29,16 +32,21 @@ public class Logger {
     //-response: statuscode
     //-response: bytelength
     // example (from wiki): 127.0.0.1 user-identifier frank [10/Oct/2000:13:55:36 -0700] "GET /apache_pb.gif HTTP/1.0" 200 2326
-    public void log(String iNetAddress, String username, String method, String identifier, int version, int statusCode, int byteLength)
-            throws IOException {
-        String logFile = httpdConf.getHttpd("LogFile");
-        FileWriter fileWriter = new FileWriter(logFile, true);
-        PrintWriter printWriter = new PrintWriter(fileWriter);
-        String logMessage = String.format("%s - %s [%s] %s %s %s %s %s\n",
-                iNetAddress, username, this.getDateTime(ZonedDateTime.now()),
-                method, identifier, version, statusCode, byteLength);
-        printWriter.printf("%s\n", logMessage);
-        printWriter.close();
+    public void log(Socket client, HTTPRequest req, HTTPResponse resp, String username) {
+        try {
+            String logFile = httpdConf.getHttpd("LogFile");
+            FileWriter fileWriter = new FileWriter(logFile, true);
+            PrintWriter printWriter = new PrintWriter(fileWriter);
+            String logMessage = String.format("%s %s %s [%s] %s %s %s %s %s\n",
+                    client.getInetAddress(), "-", username, this.getDateTime(ZonedDateTime.now()),
+                    req.getVerb(), req.getIdentifier(), req.getVersion(), resp.getStatusCode(), resp.getBody().length);
+            printWriter.printf("%s", logMessage);
+            System.out.println(logMessage);
+            printWriter.close();
+        } catch (IOException e) {
+            System.out.println("UNABLE TO WRITE TO LOG FILE");
+            e.printStackTrace();
+        }
     }
 
     private String getDateTime(ZonedDateTime timeStamp) {

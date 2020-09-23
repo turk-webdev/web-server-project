@@ -133,7 +133,7 @@ public class HTTPRequestThread extends Thread {
         verbObj.execute(responseObj, requestObj, this);
 
         // Finally, log everything
-//        logger.log(client.getInetAddress().toString(), auth.getUsername(), );
+        logger.log(client, requestObj, responseObj, auth.getUsername());
 
         // With everything done, we close the client connection
         try {
