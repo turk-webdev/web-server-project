@@ -49,6 +49,7 @@ public class HTTPRequest {
     public Set<String> argsKeySet() { return uriObj.argsKeySet(); }
     public String getArgs(String key) { return uriObj.getArgs(key); }
 
-
+    // CGI Handler helper function
+    public Set<String> envKeySet() { return headers.keySet(); }
 
 }

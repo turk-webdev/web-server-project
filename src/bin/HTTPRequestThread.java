@@ -110,7 +110,15 @@ public class HTTPRequestThread implements Runnable {
         }
 
         if (uriObj.isScriptAliased()) {
-            // TODO: script processing here
+            CGIHandler cgiHandler = new CGIHandler();
+            byte[] body = cgiHandler.handle(uriObj, requestObj);
+            if (!(body.equals("error".getBytes()))){
+                responseObj.setStatusCode(200);
+                responseObj.setBody(body);
+            }else{
+                responseObj.setStatusCode(500);
+            }
+            responseObj.sendResponse();
             return;
         }
 

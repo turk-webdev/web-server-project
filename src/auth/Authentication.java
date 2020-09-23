@@ -1,5 +1,8 @@
 package auth;
 
+import auth.Htaccess;
+import auth.Htpassword;
+
 import bin.HTTPRequestThread;
 import bin.obj.HTTPRequest;
 import bin.obj.HTTPResponse;
