@@ -28,6 +28,9 @@ public class CGIHandler {
         for (String key : req.envKeySet()){
             env.put(key, req.get(key));
         }
+        if (res.hasQueryString()){
+            env.put("QUERY_STRING", res.getQueryString());
+        }
         try {
             Process process = procBuilder.start();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
