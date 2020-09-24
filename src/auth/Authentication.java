@@ -30,13 +30,17 @@ public class Authentication {
         htpasswordObj = new Htpassword();
     }
 
-    public int run(String htaccessPath, HTTPResponse responseObj, HTTPRequest requestObj) {
+    public void parseFiles(String htaccessPath) {
         HtaccessParser htaccessParser = new HtaccessParser(htaccessObj);
         HtpasswordParser htpasswordParser = new HtpasswordParser(htpasswordObj);
         if (Files.exists(Paths.get(htaccessPath))) {
             htaccessParser.parse(convertPathToIS(htaccessPath));
             htpasswordParser.parse(convertPathToIS(htaccessObj.get("AuthUserFile")));
         }
+    }
+
+    public int run(HTTPResponse responseObj, HTTPRequest requestObj) {
+
 
         // If the request did not have Authorization header, 401 and challenge client
         if (!requestObj.containsKey("Authorization")) {
@@ -106,7 +110,10 @@ public class Authentication {
         String contents[] = new File(path).list();
 
         for (String currFile : contents) {
-            if (currFile.equals(accessFile)) return true;
+            if (currFile.equals(accessFile)) {
+                parseFiles(path + accessFile);
+                return true;
+            }
         }
 
         return false;
