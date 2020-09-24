@@ -84,7 +84,7 @@ public class HTTPRequestThread extends Thread {
         // If the target directory is protected, check the headers
         Authentication auth = new Authentication();
         if (auth.isProtectedDir(uriObj.getPathToDest(), getHttpd("AccessFile"))) {
-            int authCode = auth.run(uriObj.getPathToDest() + File.pathSeparator + getHttpd("AccessFile"), responseObj, requestObj);
+            int authCode = auth.run(responseObj, requestObj);
 
             // If things were not okay, then we built the response within auth, just send the response
             if (authCode != 200) {
