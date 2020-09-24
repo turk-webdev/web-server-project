@@ -39,7 +39,7 @@ public class CGIHandler {
             while ((line = bufferedReader.readLine()) != null){
                 if (line.equals("") || line.equals("\r\n")) continue;
                 stringBuilder.append(line);
-                stringBuilder.append(System.getProperty("line.separator"));
+                stringBuilder.append("\n");
             }
             return stringBuilder.toString().getBytes();
         }catch (Exception e){
